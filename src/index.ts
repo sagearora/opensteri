@@ -1,38 +1,45 @@
 import { configDotenv } from 'dotenv';
 configDotenv()
 
-import express, { Application } from 'express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import cors from 'cors';
+import Express, { json } from 'express';
 import morgan from 'morgan';
-import swaggerUi from "swagger-ui-express";
-import { RegisterRoutes } from "../build/routes";
+import { resolvers } from './resolvers';
+import { readFileSync } from 'fs';
+import { SteriItemOutput } from './data/steriItemHandler';
+import { startStandaloneServer } from '@apollo/server/dist/esm/standalone';
 
-const app: Application = express()
+const app = Express()
 const port = 8080
 
-// Body parsing Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+export interface MyContext {
+    authorization: string | undefined
+}
+
+const server = new ApolloServer<MyContext>({
+    typeDefs: readFileSync('./schema.graphql', { encoding: 'utf-8' }),
+    resolvers,
+})
+
 app.use(morgan('tiny'))
-app.use(express.static('public'))
-
-const router = express.Router();
-RegisterRoutes(router);
-app.use('/api', router);
-
-app.use(
-    "/docs",
-    swaggerUi.serve,
-    swaggerUi.setup(undefined, {
-        swaggerOptions: {
-            url: '/swagger.json'
-        }
-    })
-)
+app.use(Express.static('public'))
 
 try {
-    app.listen(port, () => {
-        console.log(`Server running on http://localhost:${port}`)
-    })
+    server.start()
+        .then(() => {
+            app.use('/graphql',
+                cors<cors.CorsRequest>(),
+                json(),
+                expressMiddleware(server, {
+                    context: async ({ req }) => ({ authorization: req.headers.authorization })
+                })
+            )
+            app.listen(port, () => {
+                console.log(`Server running on http://localhost:${port}`)
+            })
+        })
 } catch (error: any) {
     console.log(`Error occurred: ${error.message}`)
 }

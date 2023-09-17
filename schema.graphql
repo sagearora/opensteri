@@ -1,0 +1,13 @@
+type steri_item {
+    id: Int!
+    name: String!
+    category: String!
+    is_active: Boolean!
+    total_count: Int
+    is_count_enabled: Boolean
+}
+
+type Query {
+    steri_item: [steri_item]
+    steri_item_by_pk(id: Int!): steri_item
+}
