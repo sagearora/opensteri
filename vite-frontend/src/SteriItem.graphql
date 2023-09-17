@@ -1,0 +1,9 @@
+query listSteriItems {
+    steri_item {
+        id
+        name
+        category
+        total_count
+        is_active
+    }
+}

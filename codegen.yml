@@ -1,5 +1,6 @@
 overwrite: true
 schema: "./schema.graphql"
+documents: "./vite-frontend/**/*.graphql"
 generates:
   src/__generated__/resolver-types.ts:
     plugins:
@@ -8,3 +9,15 @@ generates:
     config:
       useIndexSignature: true
       contextType: "../index#MyContext"
+  vite-frontend/src/__generated__/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+          reactApolloVersion: 3
+          withHooks: true
+          withHOC: false
+          withComponent: false
+          exportFragmentSpreadSubTypes: true
+          documentMode: graphQLTag

@@ -8,9 +8,10 @@
   "license": "GNU_v3",
   "scripts": {
     "start": "npm run codegen && node dist/index.js",
-    "dev": "concurrently \"graphql-codegen --watch\" \"nodemon src/index.ts\"",
+    "dev": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"nodemon src/index.ts\"",
     "build": "npm run codegen && tsc -p .",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml",
+    "codegen:watch": "graphql-codegen --config codegen.yml --watch"
   },
   "nodemonConfig": {
     "watch": [
@@ -31,8 +32,11 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "^4.1.0",
     "@graphql-codegen/typescript": "4.0.1",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@graphql-codegen/typescript-resolvers": "4.0.1",
+    "@parcel/watcher": "^2.3.0",
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.17",
     "@types/morgan": "^1.9.5",
