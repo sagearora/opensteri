@@ -7,8 +7,9 @@
   "author": "saj@aroradental.com",
   "license": "GNU_v3",
   "scripts": {
+    "prestart": "knex migrate:latest",
     "start": "node dist/index.js",
-    "dev": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"nodemon src/index.ts\"",
+    "dev": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"nodemon\"",
     "prebuild": "npm install",
     "build": "npm run codegen && npm run build:server && npm run build:frontend",
     "build:server": "tsc -p .",
@@ -18,15 +19,17 @@
   },
   "nodemonConfig": {
     "watch": [
-      "src"
+      "server"
     ],
     "ext": "ts",
-    "exec": "ts-node ./src/index.ts"
+    "exec": "ts-node ./server/index.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.9.3",
+    "base-64": "^1.0.0",
     "better-sqlite3": "^8.6.0",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.9",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "graphql": "^16.8.0",
@@ -40,6 +43,7 @@
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@graphql-codegen/typescript-resolvers": "4.0.1",
     "@parcel/watcher": "^2.3.0",
+    "@types/base-64": "^1.0.0",
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.17",
     "@types/morgan": "^1.9.5",

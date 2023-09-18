@@ -5,6 +5,7 @@ import knexConnection from "../db-config"
 
 export interface UserHandler {
     get: ReturnType<typeof get>,
+    bulkGet: ReturnType<typeof bulkGet>,
     list: ReturnType<typeof list>,
     insert: ReturnType<typeof insert>,
     update: ReturnType<typeof update>,
@@ -21,6 +22,13 @@ const get = (tbl: () => Knex.QueryBuilder) =>
         )[0]
     }
 
+const bulkGet = (tbl: () => Knex.QueryBuilder) =>
+    async (ids: number[]) => {
+        return (
+            await tbl().select()
+                .whereIn('id', ids) as User[]
+        )
+    }
 const where = (tbl: () => Knex.QueryBuilder) =>
     async (where: Partial<User>) => {
         return (
@@ -59,6 +67,7 @@ function create(): UserHandler {
 
     return {
         get: get(tbl),
+        bulkGet: bulkGet(tbl),
         list: list(tbl),
         insert: insert(tbl),
         update: update(tbl),

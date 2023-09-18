@@ -1,4 +1,4 @@
-import { Resolvers } from './__generated__/resolver-types';
+import { Resolvers, Steri_Label } from './__generated__/resolver-types';
 
 // Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves books from the "books" array above.
@@ -51,30 +51,45 @@ export const resolvers: Resolvers = {
         insert_steri_label: async (p, args, context) => {
             const handler = context.datasources.steriLabelHandler
             const ids = await handler.insert(args.objects)
+            const labels = await Promise.all(ids.map(id => handler.get(id)))
+
+            const processed_labels: Steri_Label[] = await context.datasources.printHandler
+                .printLabels(
+                    context.datasources,
+                    labels.filter(l => !l.skip_print))
+            
+            const returning = labels.map(label => processed_labels
+                .find(pl => pl.id === label.id) || label)
             return {
                 affected_rows: ids.length,
-                returning: await Promise.all(ids.map(id => handler.get(id)))
+                returning,
             }
         },
     },
     steri_label: {
         steri_item: (p, args, context) => {
+            if (!!p.steri_item) {
+                return p.steri_item
+            }
             return context.datasources.steriItemHandler
                 .get(p.steri_item_id)
         },
         clinic_user: (p, args, context) => {
+            if (!!p.clinic_user) {
+                return p.clinic_user
+            }
             return context.datasources.userHandler
                 .get(p.clinic_user_id)
         },
         steri_cycle: (p, args, context) => {
-            if (!p.steri_cycle_id) {
+            if (!!p.steri_cycle || !p.steri_cycle_id) {
                 return null
             }
             return context.datasources.steriCycleHandler
                 .get(p.steri_cycle_id)
         },
         steri_cycle_user: (p, args, context) => {
-            if (!p.steri_cycle_user_id) {
+            if (!!p.steri_cycle_user || !p.steri_cycle_user_id) {
                 return null
             }
             return context.datasources.userHandler

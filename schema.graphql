@@ -53,12 +53,13 @@ type steri_label {
     steri_cycle_user_id: Int
     steri_cycle_user: user
     loaded_at: String
+    skip_print: Boolean!
 }
 
 input steri_label_insert_input {
     steri_item_id: Int!
     expiry_at: String!
-    skip_print: Boolean
+    skip_print: Boolean!
     clinic_user_id: Int!
 }
 

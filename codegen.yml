@@ -2,13 +2,13 @@ overwrite: true
 schema: "./schema.graphql"
 documents: "./vite-frontend/**/*.graphql"
 generates:
-  src/__generated__/resolver-types.ts:
+  server/src/__generated__/resolver-types.ts:
     plugins:
       - "typescript"
       - "typescript-resolvers"
     config:
       useIndexSignature: true
-      contextType: "../index#MyContext"
+      contextType: "../../ApolloContext#ApolloContext"
   vite-frontend/src/__generated__/graphql.tsx:
     plugins:
       - "typescript"

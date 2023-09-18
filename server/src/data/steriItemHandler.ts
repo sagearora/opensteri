@@ -5,6 +5,7 @@ import knexConnection from "../db-config"
 
 export interface SteriItemHandler {
     get: ReturnType<typeof get>,
+    bulkGet: ReturnType<typeof bulkGet>,
     list: ReturnType<typeof list>,
     insert: ReturnType<typeof insert>,
     update: ReturnType<typeof update>,
@@ -18,6 +19,14 @@ const get = (tbl: () => Knex.QueryBuilder) =>
                     id,
                 }) as Steri_Item[]
         )[0]
+    }
+
+const bulkGet = (tbl: () => Knex.QueryBuilder) =>
+    async (ids: number[]) => {
+        return (
+            await tbl().select()
+                .whereIn('id', ids) as Steri_Item[]
+        )
     }
 
 const list = (tbl: () => Knex.QueryBuilder) =>
@@ -50,6 +59,7 @@ function create(): SteriItemHandler {
 
     return {
         get: get(tbl),
+        bulkGet: bulkGet(tbl),
         list: list(tbl),
         insert: insert(tbl),
         update: update(tbl),
