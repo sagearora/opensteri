@@ -7,12 +7,12 @@ import cors from 'cors';
 import Express, { json } from 'express';
 import { readFileSync } from 'fs';
 import morgan from 'morgan';
-import { resolvers } from './resolvers';
-import steriItemHandler, { SteriItemHandler } from './data/steriItemHandler';
-import userHandler, { UserHandler } from './data/userHandler';
-import steriHandler, { SteriHandler } from './data/steriHandler';
-import steriLabelHandler, { SteriLabelHandler } from './data/steriLabelHandler';
-import steriCycleHandler, { SteriCycleHandler } from './data/steriCycleHandler';
+import { resolvers } from './src/resolvers';
+import steriItemHandler, { SteriItemHandler } from './src/data/steriItemHandler';
+import userHandler, { UserHandler } from './src/data/userHandler';
+import steriHandler, { SteriHandler } from './src/data/steriHandler';
+import steriLabelHandler, { SteriLabelHandler } from './src/data/steriLabelHandler';
+import steriCycleHandler, { SteriCycleHandler } from './src/data/steriCycleHandler';
 
 const app = Express()
 const port = 8080
