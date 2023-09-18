@@ -65,6 +65,7 @@ function PrinterScreen() {
                 steri_item_id: number;
                 clinic_user_id: number;
                 expiry_at: string;
+                skip_print: boolean;
             }[] = [];
             items
                 .filter(item => to_print[item.id] > 0)
@@ -74,6 +75,7 @@ function PrinterScreen() {
                             steri_item_id: item.id,
                             clinic_user_id: user.id,
                             expiry_at: dayjs().add(DefaultExpiryMonths, 'months').toISOString(),
+                            skip_print: false,
                         })
                     }
                 })

@@ -7,15 +7,15 @@
   "author": "saj@aroradental.com",
   "license": "GNU_v3",
   "scripts": {
-    "prestart": "knex migrate:latest",
     "start": "node dist/index.js",
     "dev": "concurrently \"graphql-codegen --config codegen.yml --watch\" \"nodemon\"",
     "prebuild": "npm install",
-    "build": "npm run codegen && npm run build:server && npm run build:frontend",
+    "build": "npm run codegen && npm run build:server && npm run build:frontend && knex:migrate:latest",
     "build:server": "tsc -p .",
     "build:frontend": "npm run build --prefix vite-frontend",
     "codegen": "graphql-codegen --config codegen.yml",
-    "codegen:watch": "graphql-codegen --config codegen.yml --watch"
+    "codegen:watch": "graphql-codegen --config codegen.yml --watch",
+    "knex:migrate:latest": "knex migrate:latest"
   },
   "nodemonConfig": {
     "watch": [
