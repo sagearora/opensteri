@@ -8,12 +8,24 @@ import Express, { json } from 'express';
 import { readFileSync } from 'fs';
 import morgan from 'morgan';
 import { resolvers } from './resolvers';
+import steriItemHandler, { SteriItemHandler } from './data/steriItemHandler';
+import userHandler, { UserHandler } from './data/userHandler';
+import steriHandler, { SteriHandler } from './data/steriHandler';
+import steriLabelHandler, { SteriLabelHandler } from './data/steriLabelHandler';
+import steriCycleHandler, { SteriCycleHandler } from './data/steriCycleHandler';
 
 const app = Express()
 const port = 8080
 
 export interface MyContext {
     authorization: string | undefined
+    datasources: {
+        steriItemHandler: SteriItemHandler
+        userHandler: UserHandler
+        steriHandler: SteriHandler
+        steriLabelHandler: SteriLabelHandler
+        steriCycleHandler: SteriCycleHandler
+    }
 }
 
 const server = new ApolloServer<MyContext>({
@@ -31,7 +43,16 @@ try {
                 cors<cors.CorsRequest>(),
                 json(),
                 expressMiddleware(server, {
-                    context: async ({ req }) => ({ authorization: req.headers.authorization })
+                    context: async ({ req }) => ({ 
+                        authorization: req.headers.authorization,
+                        datasources: {
+                            steriItemHandler: steriItemHandler.create(),
+                            userHandler: userHandler.create(),
+                            steriHandler: steriHandler.create(),
+                            steriLabelHandler: steriLabelHandler.create(),
+                            steriCycleHandler: steriCycleHandler.create(),
+                        }
+                    })
                 })
             )
             app.listen(port, () => {

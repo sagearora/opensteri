@@ -1,16 +1,16 @@
 import { ApolloProvider } from "@apollo/client";
 import apolloClient from "./apolloClient";
-import SteriItems from "./components/SteriItems";
-import { Button } from "./components/ui/button";
+import AppRouter from "./screens/AppRouter";
+import { Toaster } from "./components/ui/toaster";
+import { ProvideUser } from "./lib/UserProvider";
 
 function App() {
   return (
     <ApolloProvider client={apolloClient}>
-      <div className="App">
-        <h1>React + Apollo + GraphQL</h1>
-        <Button>HELLO WORLD</Button>
-        <SteriItems />
-      </div>
+      <ProvideUser>
+        <AppRouter />
+      </ProvideUser>
+      <Toaster />
     </ApolloProvider>
   )
 }

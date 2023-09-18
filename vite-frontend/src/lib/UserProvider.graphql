@@ -1,0 +1,16 @@
+fragment User on user {
+    id
+    created_at
+    updated_at
+    name
+    pin
+    is_admin
+    is_active
+    is_spore_tester
+}
+
+query getUserByPin($pin: Int!) {
+    user_by_pin(pin: $pin) {
+        ...User
+    }
+}

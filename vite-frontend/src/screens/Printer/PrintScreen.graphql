@@ -1,0 +1,35 @@
+fragment PrintLabel on steri_label {
+    id
+    created_at
+    updated_at
+    expiry_at
+    steri_item_id
+    steri_item {
+        id
+        name
+        category
+    }
+}
+
+fragment PrinterSteriItem on steri_item {
+    id
+    name
+    is_active
+    category
+    is_count_enabled
+    total_count
+}
+
+query listSteriItems {
+    steri_item (order_by: {category: asc}) {
+        ...PrinterSteriItem
+    }
+}
+
+mutation createLabels($objects: [steri_label_insert_input!]!) {
+    insert_steri_label(objects: $objects) {
+        returning {
+            ...PrintLabel
+        }
+    }
+}

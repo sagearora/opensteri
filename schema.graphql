@@ -5,12 +5,20 @@ type steri_item {
     is_active: Boolean!
     total_count: Int
     is_count_enabled: Boolean
+    created_at: String!
+    updated_at: String!
 }
 
-type Query {
-    steri_item: [steri_item!]
-    steri_item_by_pk(id: Int!): steri_item
+enum order_by {
+    asc
+    desc
 }
+
+input steri_item_order_by {
+    category: order_by
+}
+
+
 
 input steri_item_insert_input {
     name: String!
@@ -20,6 +28,88 @@ input steri_item_insert_input {
     is_count_enabled: Boolean
 }
 
+type steri_cycle {
+    id: Int!
+    created_at: String!
+    updated_at: String!
+    steri_id: Int!
+}
+
+input steri_cycle_insert_input {
+    steri_id: Int!
+}
+
+type steri_label {
+    id: Int!
+    created_at: String!
+    updated_at: String!
+    clinic_user_id: Int!
+    clinic_user: user!
+    steri_item_id: Int!
+    steri_item: steri_item!
+    expiry_at: String!
+    steri_cycle_id: Int
+    steri_cycle: steri_cycle
+    steri_cycle_user_id: Int
+    steri_cycle_user: user
+    loaded_at: String
+}
+
+input steri_label_insert_input {
+    steri_item_id: Int!
+    expiry_at: String!
+    skip_print: Boolean
+    clinic_user_id: Int!
+}
+
+type steri_label_mutation_response {
+    affected_rows: Int!
+    returning: [steri_label!]
+}
+
+type user {
+    id: Int!
+    name: String!
+    pin: Int!
+    created_at: String!
+    updated_at: String!
+    is_admin: Boolean
+    is_spore_tester: Boolean
+    is_active: Boolean
+}
+
+input user_insert_input {
+    name: String!
+    pin: Int!
+    is_admin: Boolean
+    is_spore_tester: Boolean
+}
+
+type steri {
+    id: Int!
+    name: String!
+    serial: String!
+    created_at: String!
+    updated_at: String!
+}
+
+input steri_insert_input {
+    name: String!
+    serial: String!
+}
+
+type Query {
+    steri_item(order_by: [steri_item_order_by!]): [steri_item!]
+    steri_item_by_pk(id: Int!): steri_item
+    user: [user!]
+    user_by_pin(pin: Int!): user
+    steri: [steri!]
+    steri_label: [steri_label!]
+}
+
 type Mutation {
     insert_steri_item_one(object: steri_item_insert_input!): steri_item
+    insert_steri_label(objects: [steri_label_insert_input!]!): steri_label_mutation_response
+    insert_user_one(object: user_insert_input!): user
+    insert_steri_one(object: steri_insert_input!): steri
 }

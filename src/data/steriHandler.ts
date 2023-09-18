@@ -1,9 +1,9 @@
 import { Knex } from 'knex'
-import { Steri_Item, Steri_Item_Insert_Input } from '../__generated__/resolver-types'
+import { Steri, Steri_Insert_Input } from '../__generated__/resolver-types'
 import knexConnection from "../db-config"
 
 
-export interface SteriItemHandler {
+export interface SteriHandler {
     get: ReturnType<typeof get>,
     list: ReturnType<typeof list>,
     insert: ReturnType<typeof insert>,
@@ -16,7 +16,7 @@ const get = (tbl: () => Knex.QueryBuilder) =>
             await tbl().select()
                 .where({
                     id,
-                }) as Steri_Item[]
+                }) as Steri[]
         )[0]
     }
 
@@ -24,17 +24,17 @@ const list = (tbl: () => Knex.QueryBuilder) =>
     async () => {
         return (
             await tbl().select()
-        ) as Steri_Item[]
+        ) as Steri[]
     }
 
 const insert = (tbl: () => Knex.QueryBuilder) =>
-    async (attributes: Steri_Item_Insert_Input[]) => {
+    async (attributes: Steri_Insert_Input[]) => {
         const items = await tbl().insert(attributes, ['id'])
         return items.map(item => item.id)
     }
 
 const update = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<Steri_Item_Insert_Input>) => {
+    async (id: number, attributes: Partial<Steri_Insert_Input>) => {
         return (
             await tbl()
                 .update(attributes, '*')
@@ -44,9 +44,9 @@ const update = (tbl: () => Knex.QueryBuilder) =>
         )[0]
     }
 
-function create(): SteriItemHandler {
+function create(): SteriHandler {
     const tbl = () => knexConnection
-        .table('steri_item')
+        .table('steri')
 
     return {
         get: get(tbl),

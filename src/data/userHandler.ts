@@ -1,13 +1,14 @@
 import { Knex } from 'knex'
-import { Steri_Item, Steri_Item_Insert_Input } from '../__generated__/resolver-types'
+import { User, User_Insert_Input } from '../__generated__/resolver-types'
 import knexConnection from "../db-config"
 
 
-export interface SteriItemHandler {
+export interface UserHandler {
     get: ReturnType<typeof get>,
     list: ReturnType<typeof list>,
     insert: ReturnType<typeof insert>,
     update: ReturnType<typeof update>,
+    where: ReturnType<typeof where>,
 }
 
 const get = (tbl: () => Knex.QueryBuilder) =>
@@ -16,25 +17,33 @@ const get = (tbl: () => Knex.QueryBuilder) =>
             await tbl().select()
                 .where({
                     id,
-                }) as Steri_Item[]
+                }) as User[]
         )[0]
+    }
+
+const where = (tbl: () => Knex.QueryBuilder) =>
+    async (where: Partial<User>) => {
+        return (
+            await tbl().select()
+                .where(where) as User[]
+        )
     }
 
 const list = (tbl: () => Knex.QueryBuilder) =>
     async () => {
         return (
             await tbl().select()
-        ) as Steri_Item[]
+        ) as User[]
     }
 
 const insert = (tbl: () => Knex.QueryBuilder) =>
-    async (attributes: Steri_Item_Insert_Input[]) => {
+    async (attributes: User_Insert_Input[]) => {
         const items = await tbl().insert(attributes, ['id'])
         return items.map(item => item.id)
     }
 
 const update = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<Steri_Item_Insert_Input>) => {
+    async (id: number, attributes: Partial<User_Insert_Input>) => {
         return (
             await tbl()
                 .update(attributes, '*')
@@ -44,15 +53,16 @@ const update = (tbl: () => Knex.QueryBuilder) =>
         )[0]
     }
 
-function create(): SteriItemHandler {
+function create(): UserHandler {
     const tbl = () => knexConnection
-        .table('steri_item')
+        .table('user')
 
     return {
         get: get(tbl),
         list: list(tbl),
         insert: insert(tbl),
         update: update(tbl),
+        where: where(tbl),
     }
 }
 
