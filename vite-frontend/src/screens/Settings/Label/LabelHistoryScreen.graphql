@@ -1,0 +1,10 @@
+
+query listLabelHistory($limit: Int, $offset: Int, $order_by: [order_by!]) {
+    steri_label(
+        limit: $limit, 
+        offset: $offset,
+        order_by: $order_by
+    ) {
+        ...SteriLabel
+    }
+}

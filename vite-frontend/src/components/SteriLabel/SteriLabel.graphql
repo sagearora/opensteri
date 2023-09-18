@@ -1,0 +1,28 @@
+
+fragment SteriLabel on steri_label {
+    id
+    created_at
+    updated_at
+    expiry_at
+    steri_item_id
+    steri_item {
+        id
+        name
+        category
+    }
+    clinic_user {
+        id
+        name
+    }
+    steri_cycle_id
+    steri_cycle {
+        id
+        status
+        cycle_number
+    }
+    steri_cycle_user {
+        id
+        name
+    }
+    loaded_at
+}

@@ -1,0 +1,41 @@
+fragment Steri on steri {
+    id
+    created_at
+    updated_at
+    name
+    serial
+    is_active
+}
+
+mutation createSterilizer($object: steri_insert_input!) {
+    insert_steri_one(
+        object: $object,
+    ) {
+        ...Steri
+    }
+}
+
+query listSterilizers { 
+    steri(
+        order_by: {
+        column: "id",
+        direction: asc
+    }) {
+        ...Steri
+    }
+}
+
+query getSterilizer($id: Int!) { 
+    steri_by_pk(id: $id) {
+        ...Steri
+    }
+}
+
+mutation updateSterilizer($id: Int!, $set: steri_set_input!) {
+    update_steri(
+        id: $id,
+        set: $set,
+    ) {
+        ...Steri
+    }
+}

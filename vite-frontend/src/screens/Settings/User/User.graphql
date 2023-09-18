@@ -1,0 +1,32 @@
+
+mutation createUser($object: user_insert_input!) {
+    insert_user_one(
+        object: $object,
+    ) {
+        ...User
+    }
+}
+
+query listUsers{ 
+    user(order_by: {
+        column: "id",
+        direction: desc
+    }) {
+        ...User
+    }
+}
+
+query getUser($id: Int!) { 
+    user_by_pk(id: $id) {
+        ...User
+    }
+}
+
+mutation updateUser($id: Int!, $set: user_set_input!) {
+    update_user(
+        id: $id,
+        set: $set,
+    ) {
+        ...User
+    }
+}

@@ -21,7 +21,10 @@ fragment PrinterSteriItem on steri_item {
 }
 
 query listSteriItems {
-    steri_item (order_by: {category: asc}) {
+    steri_item (order_by: {
+        column: "category",
+        direction: asc
+    }) {
         ...PrinterSteriItem
     }
 }
