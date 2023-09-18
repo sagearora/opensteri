@@ -9,7 +9,12 @@ export interface PrintHandler {
 }
 
 function sendEzplToPrinterRaw(port: string, command: string): void {
-    fs.writeFileSync(port, command, 'utf-8');
+    const printer = fs.createWriteStream(port);
+    printer.write(Buffer.from(command, 'utf-8'));
+    printer.on('finish', (data: unknown) => {
+        console.log('printed', data)
+    })
+    printer.end();
 }
 
 const PRINTER_PORT = '/dev/usb/lp0';
@@ -43,7 +48,7 @@ const printLabels = () => {
                 type: QRType.SteriLabel,
                 id: label.id,
             })
-            print_cmd.push(`^L\nDy2-me-dd\nTh:m:s\nAA,4,9,1,1,0,0,#${label.id} - ${steri_item.category}\nAC,4,29,1,1,0,0,${steri_item.name.slice(0, MaxContentSize)}\nAC,4,59,1,1,0,0,${steri_item.name.slice(MaxContentSize, MaxContentSize * 2)}\nAC,4,100,1,1,0,0,${clinic_user.name}\nAA,4,135,1,1,0,0,Date: ${dayjs(label.created_at).format('YYYY-MM-DD HH:mm')}\nAA,4,162,1,1,0,0,Exp: ${dayjs(label.expiry_at).format('YYYY-MM-DD HH:mm')}\nW218,9,5,2,M0,8,6,${qr.length},0\n${qr}\nE`)
+            print_cmd.push(`^L\nDy2-me-dd\nTh:m:s\nAA,4,9,1,1,0,0,#${label.id} - ${steri_item.category}\nAC,4,29,1,1,0,0,${steri_item.name.slice(0, MaxContentSize)}\nAC,4,59,1,1,0,0,${steri_item.name.slice(MaxContentSize, MaxContentSize * 2)}\nAC,4,100,1,1,0,0,${clinic_user.name}\nAA,4,135,1,1,0,0,Date: ${dayjs(label.created_at).format('YYYY-MM-DD HH:mm')}\nAA,4,162,1,1,0,0,Exp: ${dayjs(label.expiry_at).format('YYYY-MM-DD HH:mm')}\nW218,9,5,2,M0,8,6,${qr.length},0\n${qr}\nE\n`)
             return {
                 ...label,
                 steri_item,
