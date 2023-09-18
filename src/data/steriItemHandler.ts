@@ -1,17 +1,6 @@
 import { Knex } from 'knex'
 import knexConnection from "../db-config"
-
-export interface SteriItemAttributes {
-    id: number,
-    name: string,
-    category: string,
-    total_count: number,
-    is_count_enabled: boolean,
-    is_active: boolean,
-}
-
-export interface SteriItemInput extends Omit<SteriItemAttributes, 'id'> { }
-export interface SteriItemOutput extends Required<SteriItemAttributes> { }
+import { Steri_Item, Steri_Item_Insert_Input } from '../__generated__/resolver-types'
 
 
 export interface SteriItemHandler {
@@ -27,7 +16,7 @@ export const getSteriItem = (tbl: () => Knex.QueryBuilder) =>
             await tbl().select()
                 .where({
                     id,
-                }) as SteriItemOutput[]
+                }) as Steri_Item[]
         )[0]
     }
 
@@ -35,18 +24,18 @@ export const listSteriItems = (tbl: () => Knex.QueryBuilder) =>
     async () => {
         return (
             await tbl().select()
-        ) as SteriItemOutput[]
+        ) as Steri_Item[]
     }
 
 export const insertSteriItem = (tbl: () => Knex.QueryBuilder) =>
-    async (attributes: SteriItemInput) => {
+    async (attributes: Steri_Item_Insert_Input) => {
         return (
             await tbl().insert(attributes)
         )[0]
     }
 
 export const updateSteriItem = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<SteriItemAttributes>) => {
+    async (id: number, attributes: Partial<Steri_Item_Insert_Input>) => {
         return (
             await tbl()
                 .update(attributes, '*')

@@ -5,11 +5,9 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import cors from 'cors';
 import Express, { json } from 'express';
+import { readFileSync } from 'fs';
 import morgan from 'morgan';
 import { resolvers } from './resolvers';
-import { readFileSync } from 'fs';
-import { SteriItemOutput } from './data/steriItemHandler';
-import { startStandaloneServer } from '@apollo/server/dist/esm/standalone';
 
 const app = Express()
 const port = 8080

@@ -15,4 +15,11 @@ export const resolvers: Resolvers = {
                 .get(args.id)
         }
     },
+    Mutation: {
+        insert_steri_item_one: async (_, args) => {
+            const handler = steriItemHandler.create()
+            const id = await handler.insert(args.object)
+            return handler.get(id)
+        }
+    }
 };

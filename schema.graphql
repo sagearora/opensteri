@@ -8,6 +8,18 @@ type steri_item {
 }
 
 type Query {
-    steri_item: [steri_item]
+    steri_item: [steri_item!]
     steri_item_by_pk(id: Int!): steri_item
+}
+
+input steri_item_insert_input {
+    name: String!
+    category: String!
+    is_active: Boolean
+    total_count: Int
+    is_count_enabled: Boolean
+}
+
+type Mutation {
+    insert_steri_item_one(object: steri_item_insert_input!): steri_item
 }
