@@ -190,6 +190,8 @@ input steri_cycle_set_input {
 enum steri_label_event_type {
     add_steri_item
     remove_steri_item
+    reprint
+    update_steri_item_id
 }
 
 input steri_label_event_insert_input {

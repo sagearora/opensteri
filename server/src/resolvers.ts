@@ -133,8 +133,8 @@ export const resolvers: Resolvers = {
             const steri_labels: Steri_Label[] = []
             for (let i = 0; i < args.objects.length; i++) {
                 const item = args.objects[i]
-                switch(item.type) {
-                    case Steri_Label_Event_Type.AddSteriItem:
+                switch (item.type) {
+                    case Steri_Label_Event_Type.AddSteriItem: {
                         const data = JSON.parse(item.data)
                         if (!data.steri_cycle_id) {
                             continue
@@ -146,7 +146,7 @@ export const resolvers: Resolvers = {
                             skip_print: !item.force_reprint,
                         }))
                         break
-                    case Steri_Label_Event_Type.RemoveSteriItem:
+                    } case Steri_Label_Event_Type.RemoveSteriItem: {
                         steri_labels.push(await handler.update(item.steri_label_id, {
                             steri_cycle_id: null,
                             steri_cycle_user_id: null,
@@ -154,6 +154,22 @@ export const resolvers: Resolvers = {
                             skip_print: !item.force_reprint,
                         }))
                         break
+                    } case Steri_Label_Event_Type.Reprint: {
+                        steri_labels.push(await handler.update(item.steri_label_id, {
+                            skip_print: false,
+                        }))
+                        break
+                    } case Steri_Label_Event_Type.UpdateSteriItemId: {
+                        const data = JSON.parse(item.data)
+                        if (!data.steri_item_id) {
+                            continue
+                        }
+                        steri_labels.push(await handler.update(item.steri_label_id, {
+                            steri_item_id: data.steri_item_id,
+                            skip_print: false,
+                        }))
+                        break
+                    }
                 }
             }
             const to_print = steri_labels.filter(l => !Boolean(l.skip_print))

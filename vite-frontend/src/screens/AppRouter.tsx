@@ -23,6 +23,7 @@ import SteriCycleEditScreen from "./SteriCycle/SteriCycleEditScreen";
 import SteriCycleListScreen from "./SteriCycle/SteriCycleListScreen";
 import SteriCycleScreen from "./SteriCycle/SteriCycleScreen";
 import SteriCycleStartScreen from "./SteriCycle/SteriCycleStartScreen";
+import ToolsScreen from "./Tools/ToolsScreen";
 
 const router = createBrowserRouter([
     {
@@ -48,6 +49,9 @@ const router = createBrowserRouter([
             path: 'printlabels',
             element: <PrinterScreen />
         }, {
+            path: 'tools',
+            element: <ToolsScreen />
+        },{
             path: 'settings',
             element: <UserGuard />,
             children: [{
