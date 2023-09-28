@@ -1,0 +1,48 @@
+fragment SteriItem on steri_item {
+    id
+    created_at
+    updated_at
+    name
+    category
+    is_count_enabled
+    total_count
+    is_active
+}
+
+query listSettingsSteriItems {
+    steri_item (order_by: {
+        column: "category",
+        direction: asc
+    }) {
+        ...SteriItem
+    }
+}
+
+query getSteriItem($id: Int!) { 
+    steri_item_by_pk(id: $id) {
+        ...SteriItem
+    }
+}
+
+mutation updateSteriItem($id: Int!, $set: steri_item_set_input!) {
+    update_steri_item(
+        id: $id,
+        set: $set,
+    ) {
+        ...SteriItem
+    }
+}
+
+mutation createSteriItem($object: steri_item_insert_input!) {
+    insert_steri_item_one(
+        object: $object,
+    ) {
+        ...SteriItem
+    }
+}
+
+query listSteriItemCategories {
+    steri_item_category {
+        name
+    }
+}

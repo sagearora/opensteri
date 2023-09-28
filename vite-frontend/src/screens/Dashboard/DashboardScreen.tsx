@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SporeTestWidget from './SporeTestWidget'
 
 const links = [
   {
@@ -42,6 +43,7 @@ function DashboardScreen() {
           </span>
         </Link>)}
       </div>
+      <SporeTestWidget />
     </div>
   )
 }

@@ -15,7 +15,8 @@
     "build:frontend": "npm run build --prefix vite-frontend",
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch",
-    "knex:migrate:latest": "knex migrate:latest"
+    "knex:migrate:latest": "knex migrate:latest",
+    "knex:migrate:make": "knex migrate:make"
   },
   "nodemonConfig": {
     "watch": [

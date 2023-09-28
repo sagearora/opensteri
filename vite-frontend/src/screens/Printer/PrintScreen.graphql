@@ -20,7 +20,7 @@ fragment PrinterSteriItem on steri_item {
     total_count
 }
 
-query listSteriItems {
+query listPrinterSteriItems {
     steri_item (order_by: {
         column: "category",
         direction: asc

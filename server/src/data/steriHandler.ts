@@ -1,6 +1,7 @@
 import { Knex } from 'knex'
-import { Steri, Steri_Insert_Input } from '../__generated__/resolver-types'
+import { Steri, Steri_Insert_Input, Steri_Set_Input } from '../__generated__/resolver-types'
 import knexConnection from "../db-config"
+import { ListArgs } from './types'
 
 
 export interface SteriHandler {
@@ -21,9 +22,18 @@ const get = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const list = (tbl: () => Knex.QueryBuilder) =>
-    async () => {
+    async (args?: ListArgs) => {
         return (
             await tbl().select()
+                .modify((qb) => {
+                    if (args?.order_by) {
+                        args.order_by.forEach(order => {
+                            qb.orderBy(order.column, order.direction)
+                        })
+                    }
+                    if (args?.limit) qb.limit(args.limit)
+                    if (args?.offset) qb.offset(args.offset)
+                })
         ) as Steri[]
     }
 
@@ -34,7 +44,7 @@ const insert = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const update = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<Steri_Insert_Input>) => {
+    async (id: number, attributes: Steri_Set_Input) => {
         return (
             await tbl()
                 .update(attributes, '*')

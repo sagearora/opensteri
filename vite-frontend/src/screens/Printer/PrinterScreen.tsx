@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { Loader2 } from "lucide-react";
 import { useMemo, useState } from 'react';
 import { DotLoader } from 'react-spinners';
-import { PrinterSteriItemFragment, useCreateLabelsMutation, useListSteriItemsQuery } from '../../__generated__/graphql';
+import { PrinterSteriItemFragment, useCreateLabelsMutation, useListPrinterSteriItemsQuery } from '../../__generated__/graphql';
 import { Button } from '../../components/ui/button';
 import { toast } from "../../components/ui/use-toast";
 import { DefaultExpiryMonths } from "../../constants";
@@ -13,7 +13,7 @@ function PrinterScreen() {
     const {
         data,
         loading,
-    } = useListSteriItemsQuery()
+    } = useListPrinterSteriItemsQuery()
     const [insertLabels, { loading: inserting }] = useCreateLabelsMutation()
     const [to_print, setToPrint] = useState<{ [id: number]: number }>({})
     const [selected_category, setSelectedCategory] = useState<{

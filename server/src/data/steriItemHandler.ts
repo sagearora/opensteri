@@ -1,6 +1,7 @@
 import { Knex } from 'knex'
-import { Steri_Item, Steri_Item_Insert_Input } from '../__generated__/resolver-types'
+import { Steri_Item, Steri_Item_Insert_Input, Steri_Item_Set_Input } from '../__generated__/resolver-types'
 import knexConnection from "../db-config"
+import { ListArgs } from './types'
 
 
 export interface SteriItemHandler {
@@ -9,6 +10,7 @@ export interface SteriItemHandler {
     list: ReturnType<typeof list>,
     insert: ReturnType<typeof insert>,
     update: ReturnType<typeof update>,
+    distinct: ReturnType<typeof distinct>,
 }
 
 const get = (tbl: () => Knex.QueryBuilder) =>
@@ -30,10 +32,28 @@ const bulkGet = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const list = (tbl: () => Knex.QueryBuilder) =>
-    async () => {
+    async (args?: ListArgs) => {
         return (
             await tbl().select()
+                .modify((qb) => {
+                    if (args?.order_by) {
+                        args.order_by.forEach(order => {
+                            qb.orderBy(order.column, order.direction)
+                        })
+                    }
+                    if (args?.limit) qb.limit(args.limit)
+                    if (args?.offset) qb.offset(args.offset)
+                })
         ) as Steri_Item[]
+    }
+
+const distinct = (tbl: () => Knex.QueryBuilder) =>
+    async (on: string) => {
+        return (
+            await tbl()
+                .distinct()
+                .pluck(on)
+        ) as string[]
     }
 
 const insert = (tbl: () => Knex.QueryBuilder) =>
@@ -43,7 +63,7 @@ const insert = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const update = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<Steri_Item_Insert_Input>) => {
+    async (id: number, attributes: Steri_Item_Set_Input) => {
         return (
             await tbl()
                 .update(attributes, '*')
@@ -53,6 +73,7 @@ const update = (tbl: () => Knex.QueryBuilder) =>
         )[0]
     }
 
+    
 function create(): SteriItemHandler {
     const tbl = () => knexConnection
         .table('steri_item')
@@ -63,6 +84,7 @@ function create(): SteriItemHandler {
         list: list(tbl),
         insert: insert(tbl),
         update: update(tbl),
+        distinct: distinct(tbl),
     }
 }
 

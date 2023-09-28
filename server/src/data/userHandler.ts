@@ -1,6 +1,7 @@
 import { Knex } from 'knex'
-import { User, User_Insert_Input } from '../__generated__/resolver-types'
+import { User, User_Insert_Input, User_Set_Input } from '../__generated__/resolver-types'
 import knexConnection from "../db-config"
+import { ListArgs } from './types'
 
 
 export interface UserHandler {
@@ -38,9 +39,19 @@ const where = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const list = (tbl: () => Knex.QueryBuilder) =>
-    async () => {
+    async (args?: ListArgs) => {
         return (
-            await tbl().select()
+            await tbl()
+                .select()
+                .modify((qb) => {
+                    if (args?.order_by) {
+                        args.order_by.forEach(order => {
+                            qb.orderBy(order.column, order.direction)
+                        })
+                    }
+                    if (args?.limit) qb.limit(args.limit)
+                    if (args?.offset) qb.offset(args.offset)
+                })
         ) as User[]
     }
 
@@ -51,7 +62,7 @@ const insert = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const update = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<User_Insert_Input>) => {
+    async (id: number, attributes: User_Set_Input) => {
         return (
             await tbl()
                 .update(attributes, '*')

@@ -1,6 +1,7 @@
 import { Knex } from 'knex'
-import { Steri_Label, Steri_Label_Insert_Input } from '../__generated__/resolver-types'
+import { Steri_Label, Steri_Label_Insert_Input, Steri_Label_Set_Input } from '../__generated__/resolver-types'
 import knexConnection from "../db-config"
+import { ListArgs } from './types'
 
 
 export interface SteriLabelHandler {
@@ -8,6 +9,7 @@ export interface SteriLabelHandler {
     list: ReturnType<typeof list>,
     insert: ReturnType<typeof insert>,
     update: ReturnType<typeof update>,
+    raw: () => Knex.QueryBuilder,
 }
 
 const get = (tbl: () => Knex.QueryBuilder) =>
@@ -21,9 +23,18 @@ const get = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const list = (tbl: () => Knex.QueryBuilder) =>
-    async () => {
+    async (args?: ListArgs) => {
         return (
             await tbl().select()
+                .modify((qb) => {
+                    if (args?.order_by) {
+                        args.order_by.forEach(order => {
+                            qb.orderBy(order.column, order.direction)
+                        })
+                    }
+                    if (args?.limit) qb.limit(args.limit)
+                    if (args?.offset) qb.offset(args.offset)
+                })
         ) as Steri_Label[]
     }
 
@@ -34,7 +45,7 @@ const insert = (tbl: () => Knex.QueryBuilder) =>
     }
 
 const update = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<Steri_Label_Insert_Input>) => {
+    async (id: number, attributes: Steri_Label_Set_Input) => {
         return (
             await tbl()
                 .update(attributes, '*')
@@ -53,6 +64,7 @@ function create(): SteriLabelHandler {
         list: list(tbl),
         insert: insert(tbl),
         update: update(tbl),
+        raw: tbl,
     }
 }
 

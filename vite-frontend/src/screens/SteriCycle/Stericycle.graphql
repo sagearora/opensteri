@@ -1,0 +1,77 @@
+fragment SteriCycle on steri_cycle {
+    id
+    created_at
+    updated_at
+    steri_id
+    status
+    steri {
+        id
+        name
+        serial
+    }
+    log_data
+    cycle_number
+    start_user {
+        ...User
+    }
+    start_at
+    finish_user {
+        ...User
+    }
+    finish_at
+    notes
+    steri_labels(order_by: {
+        column: "loaded_at",
+        direction: desc
+    }) {
+        ...SteriLabel
+    }
+    is_spore_test_enabled
+    spore_test_result
+    spore_test_user {
+        id
+        name
+    }
+    spore_test_recorded_at
+}
+
+
+query listSteriCycles($offset: Int, $limit: Int, $order_by: [order_by!]) { 
+    steri_cycle(limit: $limit, offset: $offset, order_by: $order_by) {
+        ...SteriCycle
+    }
+}
+
+query listActiveSterilizers {
+    steri {
+        ...Steri
+    }
+}
+
+mutation createSteriCycle($object: steri_cycle_insert_input!) {
+    insert_steri_cycle_one(object: $object) {
+        id
+    }
+}
+
+mutation updateSteriCycle($id: Int!, $set: steri_cycle_set_input!) {
+    update_steri_cycle_by_pk(
+        id: $id, set: $set
+    ) {
+        ...SteriCycle
+    }
+}
+
+query getSteriCycle($id: Int!) {
+    steri_cycle_by_pk(id: $id) {
+        ...SteriCycle
+    }
+}
+
+mutation insertSteriLabelEvent($objects: [steri_label_event_insert_input!]!) {
+    insert_steri_label_event(objects: $objects) {
+        returning {
+            ...SteriLabel
+        }
+    }
+}

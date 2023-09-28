@@ -8,13 +8,19 @@ export interface PrintHandler {
     printLabels: ReturnType<typeof printLabels>,
 }
 
-function sendEzplToPrinterRaw(port: string, command: string): void {
-    const printer = fs.createWriteStream(port);
-    printer.write(Buffer.from(command, 'utf-8'));
-    printer.on('finish', (data: unknown) => {
-        console.log('printed', data)
+async function sendEzplToPrinterRaw(port: string, command: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const printer = fs.createWriteStream(port);
+        printer.write(Buffer.from(command, 'utf-8'));
+        printer.on('finish', (data: unknown) => {
+            console.log('printed', data)
+            resolve()
+        })
+        printer.on('error', (err: unknown) => {
+            reject(err)
+        })
+        printer.end();
     })
-    printer.end();
 }
 
 const PRINTER_PORT = '/dev/usb/lp0';
@@ -24,6 +30,9 @@ const MaxContentSize = 14;
 
 const printLabels = () => {
     return async (datasources: Datasources, labels: Steri_Label[]) => {
+        if (labels.length === 0) {
+            return []
+        }
         const steri_item_ids: number[] = []
         const user_ids: number[] = []
         labels.forEach(label => {
@@ -57,9 +66,12 @@ const printLabels = () => {
         })
 
         const command = print_cmd.join('\n')
-        sendEzplToPrinterRaw(PRINTER_PORT, command)
-
-        return labelsToPrint
+        return sendEzplToPrinterRaw(PRINTER_PORT, command)
+            .then(() => labelsToPrint)
+            .catch((err) => {
+                console.error(err)
+                return []
+            })
     }
 }
 

@@ -1,0 +1,17 @@
+fragment SporeTestSteriCycle on steri_cycle {
+    id
+    cycle_number
+    start_at
+    finish_at
+    spore_test_recorded_at
+    steri {
+        id
+        name
+    }
+}
+
+query pollPendingSporeTests {
+    pending_spore_test {
+        ...SporeTestSteriCycle
+    }
+}
