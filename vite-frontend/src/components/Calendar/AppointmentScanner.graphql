@@ -1,0 +1,10 @@
+query listAppointmentSteriLabels($appointment_id: String!) {
+    steri_label(where: {
+        appointment_id: $appointment_id
+    }, order_by: {
+        column: "checkout_at",
+        direction: desc
+    }) {
+        ...SteriLabel
+    }
+}

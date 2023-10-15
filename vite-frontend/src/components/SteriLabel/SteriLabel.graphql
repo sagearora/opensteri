@@ -25,4 +25,7 @@ fragment SteriLabel on steri_label {
         name
     }
     loaded_at
+    checkout_at
+    appointment_id
+    next_label_id
 }

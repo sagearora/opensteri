@@ -22,8 +22,14 @@ const get = (tbl: () => Knex.QueryBuilder) =>
         )[0]
     }
 
+export interface SteriLabelListArgs extends ListArgs {
+    where?: {
+        appointment_id?: string | null
+    } | null
+}
+
 const list = (tbl: () => Knex.QueryBuilder) =>
-    async (args?: ListArgs) => {
+    async (args?: SteriLabelListArgs) => {
         return (
             await tbl().select()
                 .modify((qb) => {
@@ -34,6 +40,11 @@ const list = (tbl: () => Knex.QueryBuilder) =>
                     }
                     if (args?.limit) qb.limit(args.limit)
                     if (args?.offset) qb.offset(args.offset)
+                    console.log(args?.where)
+                    const where = args?.where
+                    if (where?.appointment_id) {
+                        qb.where('appointment_id', '=', where.appointment_id)
+                    }
                 })
         ) as Steri_Label[]
     }

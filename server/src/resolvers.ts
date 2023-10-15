@@ -1,8 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { Resolvers, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
 
-// Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
 export const resolvers: Resolvers = {
     Query: {
         user: (p, args, context) => {
@@ -62,7 +60,7 @@ export const resolvers: Resolvers = {
                     is_spore_test_enabled: true,
                 })
                 .orderBy('start_at', 'asc')
-        }
+        },
     },
     Mutation: {
         insert_user_one: async (p, args, context) => {
@@ -131,6 +129,7 @@ export const resolvers: Resolvers = {
             const printHandler = context.datasources.printHandler
             let affected_rows = 0
             const steri_labels: Steri_Label[] = []
+            const to_print: Steri_Label[] = []
             for (let i = 0; i < args.objects.length; i++) {
                 const item = args.objects[i]
                 switch (item.type) {
@@ -143,42 +142,90 @@ export const resolvers: Resolvers = {
                             steri_cycle_id: data.steri_cycle_id,
                             steri_cycle_user_id: item.user_id,
                             loaded_at: new Date().toISOString(),
-                            skip_print: !item.force_reprint,
                         }))
                         break
-                    } case Steri_Label_Event_Type.RemoveSteriItem: {
+                    }
+                    case Steri_Label_Event_Type.RemoveSteriItem: {
                         steri_labels.push(await handler.update(item.steri_label_id, {
                             steri_cycle_id: null,
                             steri_cycle_user_id: null,
                             loaded_at: null,
-                            skip_print: !item.force_reprint,
                         }))
                         break
-                    } case Steri_Label_Event_Type.Reprint: {
-                        steri_labels.push(await handler.update(item.steri_label_id, {
-                            skip_print: false,
-                        }))
+                    }
+                    case Steri_Label_Event_Type.Reprint: {
+                        const label = await handler.get(item.steri_label_id)
+                        if (label) {
+                            to_print.push(label)
+                            steri_labels.push(label)
+                        }
                         break
-                    } case Steri_Label_Event_Type.UpdateSteriItemId: {
+                    }
+                    case Steri_Label_Event_Type.UpdateSteriItemId: {
                         const data = JSON.parse(item.data)
                         if (!data.steri_item_id) {
                             continue
                         }
-                        steri_labels.push(await handler.update(item.steri_label_id, {
+                        const label = await handler.update(item.steri_label_id, {
                             steri_item_id: data.steri_item_id,
-                            skip_print: false,
+                        })
+                        steri_labels.push(label)
+                        to_print.push(label)
+                        break
+                    }
+                    case Steri_Label_Event_Type.CheckoutSteriItem: {
+                        const data = JSON.parse(item.data)
+                        if (!data.appointment_id) {
+                            continue
+                        }
+                        steri_labels.push(await handler.update(item.steri_label_id, {
+                            appointment_id: data.appointment_id,
+                            checkout_at: new Date().toISOString(),
                         }))
                         break
                     }
+                    case Steri_Label_Event_Type.UndoCheckout: {
+                        steri_labels.push(await handler.update(item.steri_label_id, {
+                            appointment_id: null,
+                            checkout_at: null,
+                        }))
+                        break
+                    }
+                    case Steri_Label_Event_Type.PrintReplacement: {
+                        const data = JSON.parse(item.data)
+                        if (!data.expiry_at) {
+                            continue
+                        }
+                        const current_label = await handler.get(item.steri_label_id)
+                        if (!current_label) {
+                            continue
+                        }
+                        const [new_label_id] = await handler.insert([{
+                            steri_item_id: current_label.steri_item_id,
+                            clinic_user_id: item.user_id,
+                            expiry_at: data.expiry_at,
+                            skip_print: false,
+                        }])
+                        steri_labels.push(await handler.update(item.steri_label_id, {
+                            next_label_id: new_label_id,
+                        }))
+                        to_print.push(await handler.get(new_label_id))
+                        break;
+                    }
+                    default: {
+                        throw new Error('Invalid event')
+                    }
+
                 }
             }
-            const to_print = steri_labels.filter(l => !Boolean(l.skip_print))
-            printHandler.printLabels(context.datasources, to_print)
+            if (to_print.length > 0) {
+                await printHandler.printLabels(context.datasources, to_print)
+            }
             return {
                 affected_rows,
                 returning: steri_labels
             }
-        }
+        },
     },
     steri_label: {
         steri_item: (p, args, context) => {
@@ -247,5 +294,5 @@ export const resolvers: Resolvers = {
             return context.datasources.userHandler
                 .get(p.finish_user_id)
         }
-    }
+    },
 };

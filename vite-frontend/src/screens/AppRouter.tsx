@@ -3,7 +3,7 @@ import {
     RouterProvider,
     createBrowserRouter
 } from "react-router-dom";
-import Layout from "../components/Layout";
+import Layout from "../components/Layout/Layout";
 import DashboardScreen from "./Dashboard/DashboardScreen";
 import ErrorScreen from "./ErrorScreen";
 import PrinterScreen from "./Printer/PrinterScreen";
@@ -24,6 +24,7 @@ import SteriCycleListScreen from "./SteriCycle/SteriCycleListScreen";
 import SteriCycleScreen from "./SteriCycle/SteriCycleScreen";
 import SteriCycleStartScreen from "./SteriCycle/SteriCycleStartScreen";
 import ToolsScreen from "./Tools/ToolsScreen";
+import CountScreen from "./Count/CountScreen";
 
 const router = createBrowserRouter([
     {
@@ -48,6 +49,9 @@ const router = createBrowserRouter([
         }, {
             path: 'printlabels',
             element: <PrinterScreen />
+        }, {
+            path: 'counts',
+            element: <CountScreen />
         }, {
             path: 'tools',
             element: <ToolsScreen />

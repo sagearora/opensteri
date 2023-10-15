@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import BackButton from "../../components/BackButton";
+import packageJson from '../../../package.json'
 
 function SettingsScreen() {
     return <div className='py-8 container'>
@@ -48,6 +49,10 @@ function SettingsScreen() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
         </Link>
+        <div className='flex p-2 justify-between mt-16'>
+            <p>Built with ❤️ <strong>ARORA</strong>DENTAL &copy; {new Date().getFullYear()}</p>
+            <p>v{packageJson.version}</p>
+        </div>
     </div>
 }
 

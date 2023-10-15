@@ -32,7 +32,7 @@ function SporeTestWidget() {
   }
 
   if (items.length === 0) {
-    return <div>No spore tests</div>;
+    return null;
   }
 
   return (

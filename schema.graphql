@@ -103,6 +103,9 @@ type steri_label {
     steri_cycle_user: user
     loaded_at: String
     skip_print: Boolean!
+    appointment_id: String
+    checkout_at: String
+    next_label_id: Int
 }
 
 input steri_label_insert_input {
@@ -118,6 +121,9 @@ input steri_label_set_input {
     steri_cycle_user_id: Int
     loaded_at: String
     skip_print: Boolean
+    appointment_id: String
+    checkout_at: String
+    next_label_id: Int
 }
 
 type steri_label_mutation_response {
@@ -192,6 +198,9 @@ enum steri_label_event_type {
     remove_steri_item
     reprint
     update_steri_item_id
+    checkout_steri_item
+    undo_checkout
+    print_replacement
 }
 
 input steri_label_event_insert_input {
@@ -200,6 +209,10 @@ input steri_label_event_insert_input {
     data: String!
     user_id: Int!
     force_reprint: Boolean
+}
+
+input steri_label_where {
+    appointment_id: String
 }
 
 type Query {
@@ -211,7 +224,7 @@ type Query {
     steri_item(limit: Int, offset: Int, order_by: [order_by!]): [steri_item!]
     steri_item_by_pk(id: Int!): steri_item
     steri_item_category: [steri_item_category!]
-    steri_label(limit: Int, offset: Int, order_by: [order_by!]): [steri_label!]
+    steri_label(limit: Int, where: steri_label_where offset: Int, order_by: [order_by!]): [steri_label!]
     steri_cycle_by_pk(id: Int!): steri_cycle
     steri_cycle(limit: Int, offset: Int, order_by: [order_by!]): [steri_cycle!]
     pending_spore_test: [steri_cycle!]
