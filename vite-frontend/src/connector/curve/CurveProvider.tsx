@@ -33,7 +33,6 @@ function CurveProvider({
   //check if chrome extension is installed
   useEffect(() => {
     const listener = (event: MessageEvent<{ type: string }>) => {
-      console.log(event)
       const result = event.data
       if (result && result.type === 'curvemax_installed') {
         setIsExtensionInstalled(true)

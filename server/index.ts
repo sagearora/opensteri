@@ -9,6 +9,7 @@ import { readFileSync } from 'fs';
 import morgan from 'morgan';
 import { ApolloContext } from './ApolloContext';
 import printHandler from './src/data/printHandler';
+import settingHandler from './src/data/settingHandler';
 import steriCycleHandler from './src/data/steriCycleHandler';
 import steriHandler from './src/data/steriHandler';
 import steriItemHandler from './src/data/steriItemHandler';
@@ -43,6 +44,7 @@ try {
                             steriLabelHandler: steriLabelHandler.create(),
                             steriCycleHandler: steriCycleHandler.create(),
                             printHandler: printHandler.create(),
+                            settingHandler: settingHandler.create(),
                         }
                     })
                 })

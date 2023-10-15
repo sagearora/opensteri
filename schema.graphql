@@ -9,13 +9,30 @@ input order_by {
     direction: order_direction!
 }
 
+enum clinic_connector {
+    curve_dental
+}
+
+type clinic {
+    id: String!
+    name: String!
+    admin_password: String!
+    connector: clinic_connector!
+    user: [user!]
+}
+
+input clinic_set_input {
+    admin_password: String!
+    name: String
+    connector: clinic_connector
+}
+
 type user {
     id: Int!
     name: String!
     pin: Int!
     created_at: String!
     updated_at: String!
-    is_admin: Boolean!
     is_spore_tester: Boolean!
     is_active: Boolean!
 }
@@ -24,7 +41,6 @@ input user_insert_input {
     name: String!
     pin: Int!
     is_active: Boolean!
-    is_admin: Boolean!
     is_spore_tester: Boolean!
 }
 
@@ -32,7 +48,6 @@ input user_set_input {
     name: String
     pin: Int
     is_active: Boolean
-    is_admin: Boolean
     is_spore_tester: Boolean
 }
 
@@ -216,6 +231,7 @@ input steri_label_where {
 }
 
 type Query {
+    clinic: clinic
     user(limit: Int, offset: Int, order_by: [order_by!]): [user!]
     user_by_pk(id: Int!): user
     user_by_pin(pin: Int!): user
@@ -231,6 +247,8 @@ type Query {
 }
 
 type Mutation {
+    update_clinic(set: clinic_set_input!): clinic
+    insert_user(objects: [user_insert_input!]!): [user]
     insert_user_one(object: user_insert_input!): user
     update_user(id: Int!, set: user_set_input!): user
     insert_steri_one(object: steri_insert_input!): steri

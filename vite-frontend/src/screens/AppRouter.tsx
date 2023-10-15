@@ -4,9 +4,13 @@ import {
     createBrowserRouter
 } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
+import SettingsLayout from "../components/Layout/SettingsLayout";
+import { UserProvider } from "../lib/UserProvider";
+import CountScreen from "./Count/CountScreen";
 import DashboardScreen from "./Dashboard/DashboardScreen";
 import ErrorScreen from "./ErrorScreen";
 import PrinterScreen from "./Printer/PrinterScreen";
+import AdminGuard from "./Settings/AdminGuard";
 import LabelHistoryScreen from "./Settings/Label/LabelHistoryScreen";
 import SettingsScreen from "./Settings/SettingsScreen";
 import SteriCreateScreen from "./Settings/Steri/SteriCreateScreen";
@@ -18,46 +22,20 @@ import SteriItemListScreen from "./Settings/SteriItem/SteriItemListScreen";
 import UserCreateScreen from "./Settings/User/UserCreateScreen";
 import UserEditScreen from "./Settings/User/UserEditScreen";
 import UserListScreen from "./Settings/User/UserListScreen";
-import UserGuard from "./Settings/UserGuard";
 import SteriCycleEditScreen from "./SteriCycle/SteriCycleEditScreen";
 import SteriCycleListScreen from "./SteriCycle/SteriCycleListScreen";
 import SteriCycleScreen from "./SteriCycle/SteriCycleScreen";
 import SteriCycleStartScreen from "./SteriCycle/SteriCycleStartScreen";
 import ToolsScreen from "./Tools/ToolsScreen";
-import CountScreen from "./Count/CountScreen";
 
 const router = createBrowserRouter([
     {
-        path: "/",
-        element: <Layout />,
+        path: '/settings',
+        element: <SettingsLayout />,
         errorElement: <ErrorScreen />,
         children: [{
             path: '',
-            element: <DashboardScreen />
-        }, {
-            path: 'cycles',
-            element: <SteriCycleListScreen />
-        }, {
-            path: 'cycles/create',
-            element: <SteriCycleStartScreen />
-        }, {
-            path: 'cycles/:cycle_id',
-            element: <SteriCycleScreen />
-        }, {
-            path: 'cycles/:cycle_id/edit',
-            element: <SteriCycleEditScreen />
-        }, {
-            path: 'printlabels',
-            element: <PrinterScreen />
-        }, {
-            path: 'counts',
-            element: <CountScreen />
-        }, {
-            path: 'tools',
-            element: <ToolsScreen />
-        },{
-            path: 'settings',
-            element: <UserGuard />,
+            element: <AdminGuard />,
             children: [{
                 path: '',
                 element: <SettingsScreen />
@@ -92,6 +70,40 @@ const router = createBrowserRouter([
                 path: 'steri-items/:steri_item_id/edit',
                 element: <SteriItemEditScreen />
             }]
+        }],
+    },
+    {
+        path: "/",
+        element: <UserProvider />,
+        errorElement: <ErrorScreen />,
+        children: [{
+            path: '',
+            element: <Layout />,
+            children: [{
+                path: '',
+                element: <DashboardScreen />
+            }, {
+                path: 'cycles',
+                element: <SteriCycleListScreen />
+            }, {
+                path: 'cycles/create',
+                element: <SteriCycleStartScreen />
+            }, {
+                path: 'cycles/:cycle_id',
+                element: <SteriCycleScreen />
+            }, {
+                path: 'cycles/:cycle_id/edit',
+                element: <SteriCycleEditScreen />
+            }, {
+                path: 'printlabels',
+                element: <PrinterScreen />
+            }, {
+                path: 'counts',
+                element: <CountScreen />
+            }, {
+                path: 'tools',
+                element: <ToolsScreen />
+            }],
         }]
     },
 ]);

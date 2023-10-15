@@ -42,7 +42,7 @@ const links = [
 
 function Navbar() {
     return (
-        <div className='flex space-x-2 p-2 fixed bottom-0 left-0 w-full bg-white z-10 border-t shadow-md border-t-slate-400'>
+        <div className='flex space-x-2 p-2 w-full bg-slate-50 z-10 border-t shadow-md border-t-slate-200'>
             {links.map(link => <NavLink key={link.link} to={link.link}
                 className={({ isActive }) => cn(
                     'flex-1  hover:bg-slate-200 w-full h-full py-2 text-center rounded-md flex flex-row items-center justify-center',

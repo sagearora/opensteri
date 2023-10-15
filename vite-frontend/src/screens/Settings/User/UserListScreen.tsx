@@ -1,17 +1,14 @@
 
-import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useListUsersQuery } from "../../../__generated__/graphql";
 import BackButton from "../../../components/BackButton";
-import { Badge } from "../../../components/ui/badge";
+import { Button } from "../../../components/ui/button";
+import { useClinic } from "../../../lib/useClinic";
+import { cn } from "../../../lib/utils";
 
 function UserListScreen() {
-    const {
-        loading,
-        data,
-    } = useListUsersQuery()
+    const { clinic } = useClinic()
 
-    const users = data?.user || []
+    const users = clinic.user || []
 
     return <div className='my-6 mx-auto container'>
         <div className='flex items-center mb-4'>
@@ -20,25 +17,25 @@ function UserListScreen() {
             <div className='flex-1' />
             <Link
                 to='create'>
-                + Create User
+                <Button variant='outline'>
+                    + Create User
+                </Button>
             </Link>
         </div>
-        {loading && <Loader2 />}
         {users.map(user => <Link
-            className="flex items-center border-b-2 p-2 hover:bg-slate-50 space-x-2"
+            className={cn(
+                "flex items-center border-b-2 p-2 hover:bg-slate-50 space-x-2",
+                !user.is_active && 'text-gray-700 line-through')}
             to={`${user.id}/edit`}
             key={user.id}
         >
             <div className="flex-1">
-                <p className="text-lg font-semibold">{user.name}</p>
-                <p className="text-md">{user.is_admin && <Badge>Admin</Badge>} {user.is_spore_tester ? <Badge>Spore Tester</Badge> : ''}</p>
+                <p className="text-base">{user.name} {user.is_spore_tester ? <span> &middot; Spore Tester</span> : null}</p>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
         </Link>)}
-        {!loading && users.length === 0 && <p className='text-center text-gray-500'>No users found</p>}
-
     </div>
 }
 

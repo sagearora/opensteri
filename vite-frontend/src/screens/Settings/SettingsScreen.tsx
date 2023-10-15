@@ -1,8 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import packageJson from '../../../package.json';
 import BackButton from "../../components/BackButton";
-import packageJson from '../../../package.json'
+import { Button } from "../../components/ui/button";
+import { KeyAdminUnlockUntil } from "../../constants";
 
 function SettingsScreen() {
+    const navigate = useNavigate()
+    const lockAdmin = () => {
+        localStorage.setItem(KeyAdminUnlockUntil, '0')
+        navigate('/')
+    }
     return <div className='py-8 container'>
         <div className="mb-8">
             <BackButton
@@ -49,6 +56,7 @@ function SettingsScreen() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
         </Link>
+        <Button className="w-full my-2" onClick={lockAdmin}>Lock Admin Settings</Button>
         <div className='flex p-2 justify-between mt-16'>
             <p>Built with ❤️ <strong>ARORA</strong>DENTAL &copy; {new Date().getFullYear()}</p>
             <p>v{packageJson.version}</p>

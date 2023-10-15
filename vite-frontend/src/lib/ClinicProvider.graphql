@@ -1,0 +1,27 @@
+fragment Clinic on clinic {
+    id
+    name
+    admin_password
+    connector
+    user {
+        ...User
+    }
+}
+
+query getClinic {
+    clinic {
+        ...Clinic
+    }
+}
+
+mutation updateClinic($set: clinic_set_input!) {
+    update_clinic(set: $set) {
+        ...Clinic
+    }
+}
+
+mutation insertUsers($objects: [user_insert_input!]!) {
+    insert_user(objects: $objects) {
+        ...User
+    }
+}

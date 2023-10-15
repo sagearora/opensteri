@@ -109,9 +109,6 @@ function PrinterScreen() {
                     className={`p-4 w-full mb-4 rounded-xl ${selected_category?.name === category ? 'bg-green-100 hover:bg-green-200' : 'bg-slate-200 hover:bg-slate-300'}`}
                     onClick={() => setSelectedCategory(categories[category])}
                     key={category}>{category}</button>)}
-                {/* {user.is_admin && <Link to='/settings/steri-items'>
-                        <div className='text-blue-800 py-2 text-center'>Edit Items</div>
-                    </Link>} */}
             </div>
             <div className='flex-1 relative'>
                 <div className='p-4'>

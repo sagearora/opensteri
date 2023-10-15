@@ -1,19 +1,20 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Loader2 } from 'lucide-react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from "yup"
 import { UserFragment } from '../../../__generated__/graphql'
+import { Button } from '../../../components/ui/button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../../components/ui/form'
 import { Input } from '../../../components/ui/input'
 import { Switch } from '../../../components/ui/switch'
-import { Button } from '../../../components/ui/button'
-import { Loader2 } from 'lucide-react'
+import { generateRandomPin } from '../../../lib/generateRandomPin'
 
 const schema = yup.object({
     name: yup.string().required('Please enter a name'),
     pin: yup.number()
+        .min(1000, 'PIN must not start with 0')
         .max(9999, 'Must be a 4 digit number')
         .required('Please enter a 4 digit number'),
-    is_admin: yup.boolean().required(),
     is_active: yup.boolean().required(),
     is_spore_tester: yup.boolean().required(),
 }).required();
@@ -33,8 +34,7 @@ function UserForm({
         resolver: yupResolver(schema),
         defaultValues: {
             name: user?.name || '',
-            pin: user?.pin || undefined,
-            is_admin: user ? user.is_admin : false,
+            pin: user?.pin || generateRandomPin(),
             is_spore_tester: user?.is_spore_tester || false,
             is_active: user ? user.is_active : true,
         }
@@ -73,29 +73,6 @@ function UserForm({
                             </FormItem>
                         );
                     }} />
-
-                <FormField
-                    control={form.control}
-                    name="is_admin"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                                <FormLabel className="text-base">
-                                    User is admin
-                                </FormLabel>
-                                <FormDescription>
-                                    Admin users can modify settings
-                                </FormDescription>
-                            </div>
-                            <FormControl>
-                                <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
 
                 <FormField
                     control={form.control}

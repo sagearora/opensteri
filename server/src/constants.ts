@@ -1,0 +1,1 @@
+export const Setting_Clinic_Key = 'clinic.default'

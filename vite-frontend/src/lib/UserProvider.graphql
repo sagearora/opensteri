@@ -4,7 +4,6 @@ fragment User on user {
     updated_at
     name
     pin
-    is_admin
     is_active
     is_spore_tester
 }

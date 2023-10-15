@@ -1,15 +1,15 @@
 import { ApolloProvider } from "@apollo/client";
 import apolloClient from "./apolloClient";
-import AppRouter from "./screens/AppRouter";
 import { Toaster } from "./components/ui/toaster";
-import { ProvideUser } from "./lib/UserProvider";
+import ClinicProvider from "./lib/ClinicProvider";
+import AppRouter from "./screens/AppRouter";
 
 function App() {
   return (
     <ApolloProvider client={apolloClient}>
-      <ProvideUser>
+      <ClinicProvider>
         <AppRouter />
-      </ProvideUser>
+      </ClinicProvider>
       <Toaster />
     </ApolloProvider>
   )

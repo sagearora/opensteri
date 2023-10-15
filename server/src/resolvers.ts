@@ -1,8 +1,15 @@
 import { GraphQLError } from 'graphql';
 import { Resolvers, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
+import { Setting_Clinic_Key } from './constants';
+import { Setting } from './data/settingHandler';
+
 
 export const resolvers: Resolvers = {
     Query: {
+        clinic: async (p, args, context) => {
+            const handler = context.datasources.settingHandler
+            return await handler.get(Setting_Clinic_Key)
+        },
         user: (p, args, context) => {
             return context.datasources.userHandler
                 .list()
@@ -63,6 +70,29 @@ export const resolvers: Resolvers = {
         },
     },
     Mutation: {
+        update_clinic: async (p, args, context) => {
+            const handler = context.datasources.settingHandler
+            try {
+                const result = await handler.insert([{
+                    id: Setting_Clinic_Key,
+                    value: args.set,
+                }])
+                return (await handler.get(result[0])).value
+            } catch (e) {
+                if ((e as any).code === 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+                    return await handler.update(Setting_Clinic_Key, {
+                        value: args.set,
+                    })
+                } else {
+                    throw new Error('failed to save clinic')
+                }
+            }
+        },
+        insert_user: async(p, args, context) => {
+            const handler = context.datasources.userHandler
+            const ids = (await handler.insert(args.objects))
+            return handler.bulkGet(ids)
+        },
         insert_user_one: async (p, args, context) => {
             const handler = context.datasources.userHandler
             const id = (await handler.insert([args.object]))[0]
@@ -226,6 +256,12 @@ export const resolvers: Resolvers = {
                 returning: steri_labels
             }
         },
+    },
+    clinic: {
+        user: async(p, args, context) => {
+            const userHandler = context.datasources.userHandler
+            return userHandler.list()
+        }
     },
     steri_label: {
         steri_item: (p, args, context) => {

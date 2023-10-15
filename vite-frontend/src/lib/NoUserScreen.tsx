@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react';
 import AuthCode, { AuthCodeRef } from 'react-auth-code-input';
+import Div100vh from 'react-div-100vh';
 import { UserFragment, useGetUserByPinLazyQuery } from '../__generated__/graphql';
-import { toast } from '../components/ui/use-toast';
+import Header from '../components/Layout/Header';
 import { Alert } from '../components/ui/alert';
+import { toast } from '../components/ui/use-toast';
 
 export type NoUserScreenProps = {
     setUser: (user: UserFragment) => void;
@@ -48,27 +50,28 @@ function NoUserScreen({
 
 
     return (
-        <div className='pt-[10vh] container flex flex-col items-center space-y-4'>
-            <h1 className="text-2xl font-bold text-blue-700 sm:text-3xl">ZenSteri</h1>
+        <Div100vh>
+            <Header />
+            <div className='flex-1 flex flex-col items-center pt-24'>
+                <p className="text-2xl mb-4 font-bold text-gray-500">
+                    Login with your PIN.
+                </p>
 
-            <p className=" text-gray-500">
-                Login with your PIN
-            </p>
-
-            <div className='flex justify-center'>
-                <AuthCode
-                    autoFocus
-                    disabled={loading}
-                    ref={auth_code_ref}
-                    length={ExpectedCodeLength}
-                    containerClassName='auth-code'
-                    allowedCharacters='numeric'
-                    onChange={handleOnChange} />
+                <div className='flex justify-center'>
+                    <AuthCode
+                        autoFocus
+                        disabled={loading}
+                        ref={auth_code_ref}
+                        length={ExpectedCodeLength}
+                        containerClassName='auth-code'
+                        allowedCharacters='numeric'
+                        onChange={handleOnChange} />
+                </div>
+                {error && <Alert
+                    variant='destructive'
+                    className='max-w-sm flex justify-center'>{error}</Alert>}
             </div>
-            {error && <Alert
-                variant='destructive'
-                className='max-w-sm flex justify-center'>{error}</Alert>}
-        </div>
+        </Div100vh>
     )
 }
 
