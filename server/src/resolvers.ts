@@ -1,7 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { Resolvers, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
 import { Setting_Clinic_Key } from './constants';
-import { Setting } from './data/settingHandler';
 
 
 export const resolvers: Resolvers = {
@@ -9,6 +8,12 @@ export const resolvers: Resolvers = {
         clinic: async (p, args, context) => {
             const handler = context.datasources.settingHandler
             return await handler.get(Setting_Clinic_Key)
+        },
+        printer: async(p, args, context) => {
+            const handler = context.datasources.printHandler
+            return {
+                status: await handler.checkStatus()
+            }
         },
         user: (p, args, context) => {
             return context.datasources.userHandler

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { UserFragment } from "../../__generated__/graphql"
 import { useClinic } from "../../lib/useClinic"
 import { Button } from "../ui/button"
+import PrinterStatus from "./PrinterStatus"
 
 function Header({
     user,
@@ -25,6 +26,7 @@ function Header({
             </Link>
             <div className='flex-1 text-center font-semibold'>{clinic.name}</div>
             <div className='flex items-center absolute right-2'>
+                <PrinterStatus />
                 <Link to='/settings' className='hover:bg-slate-100 rounded-full px-2 py-1'>
                     <div className='flex items-center'>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

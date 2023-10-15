@@ -27,6 +27,15 @@ input clinic_set_input {
     connector: clinic_connector
 }
 
+enum printer_status {
+    ready
+    not_ready
+}
+
+type printer {
+    status: printer_status
+}
+
 type user {
     id: Int!
     name: String!
@@ -232,6 +241,7 @@ input steri_label_where {
 
 type Query {
     clinic: clinic
+    printer: printer
     user(limit: Int, offset: Int, order_by: [order_by!]): [user!]
     user_by_pk(id: Int!): user
     user_by_pin(pin: Int!): user

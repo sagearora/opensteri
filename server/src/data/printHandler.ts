@@ -1,11 +1,13 @@
-import { Datasources } from "../../ApolloContext"
-import { Steri_Item, Steri_Label, User } from "../__generated__/resolver-types"
-import fs from 'fs'
+import dayjs from 'dayjs';
+import fs from 'fs';
+import { Datasources } from "../../ApolloContext";
+import { Printer_Status, Steri_Item, Steri_Label, User } from "../__generated__/resolver-types";
 import { QRType, createQr } from "../utils/qr-service";
-import dayjs from 'dayjs'
+import checkPrinters from '../utils/checkPrinters';
 
 export interface PrintHandler {
     printLabels: ReturnType<typeof printLabels>,
+    checkStatus: ReturnType<typeof checkStatus>,
 }
 
 async function sendEzplToPrinterRaw(port: string, command: string): Promise<void> {
@@ -21,6 +23,13 @@ async function sendEzplToPrinterRaw(port: string, command: string): Promise<void
         })
         printer.end();
     })
+}
+
+const checkStatus = () => {
+    return async () => {
+        checkPrinters()
+        return Promise.resolve(Printer_Status.Ready)
+    }
 }
 
 const PRINTER_PORT = '/dev/usb/lp0';
@@ -78,6 +87,7 @@ const printLabels = () => {
 function create(): PrintHandler {
     return {
         printLabels: printLabels(),
+        checkStatus: checkStatus(),
     }
 }
 

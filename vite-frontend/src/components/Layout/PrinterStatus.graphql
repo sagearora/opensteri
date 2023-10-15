@@ -1,0 +1,6 @@
+
+query getPrinter {
+    printer {
+        status
+    }
+}

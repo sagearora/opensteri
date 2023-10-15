@@ -1,9 +1,9 @@
 import { ReactElement, createContext } from "react"
 import { ClinicFragment, Clinic_Set_Input, User_Insert_Input, useGetClinicQuery, useInsertUsersMutation, useUpdateClinicMutation } from "../__generated__/graphql"
 import ClinicSetupForm from "../components/Clinic/ClinicSetupForm"
+import UserSetupForm from "../components/Clinic/UserSetupForm"
 import LoadingScreen from "../screens/LoadingScreen"
 import { createErrorToast } from "./createErrorToast"
-import UserSetupForm from "../components/Clinic/UserSetupForm"
 
 export type ClinicCtx = {
   clinic: ClinicFragment
