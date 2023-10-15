@@ -1,12 +1,13 @@
+import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Order_Direction, useListSteriCyclesQuery } from '../../__generated__/graphql';
 import { PageLimit } from '../../constants';
 import { SteriCycleListItem } from './SteriCycleListItem';
-import { Loader2 } from 'lucide-react';
 
 function SteriCycleListScreen() {
-    const [page, setPage] = useState(0)
+    //Todo: Allow page changes in the future.
+    const [page] = useState(0)
     const {
         loading,
         data,
