@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql';
-import { Resolvers, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
+import { Printer_Status, Resolvers, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
 import { Setting_Clinic_Key } from './constants';
 
 
@@ -9,10 +9,10 @@ export const resolvers: Resolvers = {
             const handler = context.datasources.settingHandler
             return await handler.get(Setting_Clinic_Key)
         },
-        printer: async(p, args, context) => {
+        printer: async (p, args, context) => {
             const handler = context.datasources.printHandler
             return {
-                status: await handler.checkStatus()
+                status: handler.checkStatus() ? Printer_Status.Ready : Printer_Status.NotReady
             }
         },
         user: (p, args, context) => {
@@ -93,7 +93,7 @@ export const resolvers: Resolvers = {
                 }
             }
         },
-        insert_user: async(p, args, context) => {
+        insert_user: async (p, args, context) => {
             const handler = context.datasources.userHandler
             const ids = (await handler.insert(args.objects))
             return handler.bulkGet(ids)
@@ -120,10 +120,14 @@ export const resolvers: Resolvers = {
         },
         insert_steri_label: async (p, args, context) => {
             const handler = context.datasources.steriLabelHandler
+            const printHandler = context.datasources.printHandler
+            if (!printHandler.checkStatus()) {
+                throw new Error('Printer is not ready')
+            }
             const ids = await handler.insert(args.objects)
             const labels = await Promise.all(ids.map(id => handler.get(id)))
             try {
-                const processed_labels: Steri_Label[] = await context.datasources.printHandler
+                const processed_labels: Steri_Label[] = await printHandler
                     .printLabels(
                         context.datasources,
                         labels.filter(l => !l.skip_print))
@@ -263,7 +267,7 @@ export const resolvers: Resolvers = {
         },
     },
     clinic: {
-        user: async(p, args, context) => {
+        user: async (p, args, context) => {
             const userHandler = context.datasources.userHandler
             return userHandler.list()
         }

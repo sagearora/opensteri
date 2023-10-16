@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import fs from 'fs';
 import { Datasources } from "../../ApolloContext";
-import { Printer_Status, Steri_Item, Steri_Label, User } from "../__generated__/resolver-types";
+import { Steri_Item, Steri_Label, User } from "../__generated__/resolver-types";
+import { isPrinterConnected, sendToPrinter } from '../utils/checkPrinters';
 import { QRType, createQr } from "../utils/qr-service";
 
 export interface PrintHandler {
@@ -9,30 +9,10 @@ export interface PrintHandler {
     checkStatus: ReturnType<typeof checkStatus>,
 }
 
-async function sendEzplToPrinterRaw(port: string, command: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        const printer = fs.createWriteStream(port);
-        printer.write(Buffer.from(command, 'utf-8'));
-        printer.on('finish', (data: unknown) => {
-            console.log('printed', data)
-            resolve()
-        })
-        printer.on('error', (err: unknown) => {
-            reject(err)
-        })
-        printer.end();
-    })
-}
-
 const checkStatus = () => {
-    return async () => {
-        // const result = await checkPrinters()
-        // return Promise.resolve(result ? Printer_Status.Ready : Printer_Status.NotReady)
-        return Promise.resolve(Printer_Status.Ready)
-    }
+    return () => isPrinterConnected()
 }
 
-const PRINTER_PORT = '/dev/usb/lp0';
 const printer_layout = `^Q25,3\n^W50\n^H5\n^P1\n^S2\n^AD\n^C1\n^R0\n~Q+0\n^O0\n^D0\n^E12\n~R255`
 
 const MaxContentSize = 14;
@@ -75,7 +55,7 @@ const printLabels = () => {
         })
 
         const command = print_cmd.join('\n')
-        return sendEzplToPrinterRaw(PRINTER_PORT, command)
+        return sendToPrinter(command)
             .then(() => labelsToPrint)
             .catch((err) => {
                 console.error(err)

@@ -1,10 +1,11 @@
 import { Printer_Status, useGetPrinterQuery } from '../../__generated__/graphql'
+import { PrinterStatusPollInterval } from '../../constants'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui/button'
 
 function PrinterStatus() {
     const { data, refetch } = useGetPrinterQuery({
-        // pollInterval: PrinterStatusPollInterval
+        pollInterval: PrinterStatusPollInterval,
         fetchPolicy: 'network-only'
     })
 
