@@ -1,17 +1,17 @@
 import { Printer_Status, useGetPrinterQuery } from '../../__generated__/graphql'
-import { PrinterStatusPollInterval } from '../../constants'
 import { cn } from '../../lib/utils'
 import { Button } from '../ui/button'
 
 function PrinterStatus() {
-    const { data } = useGetPrinterQuery({
-        pollInterval: PrinterStatusPollInterval
+    const { data, refetch } = useGetPrinterQuery({
+        // pollInterval: PrinterStatusPollInterval
+        fetchPolicy: 'network-only'
     })
 
     const printer_status = data?.printer?.status
 
     return (
-        <Button variant={printer_status === Printer_Status.Ready ? 'default' : 'destructive'}
+        <Button onClick={() => refetch()} variant={printer_status === Printer_Status.Ready ? 'default' : 'destructive'}
             className={cn(
                 printer_status === Printer_Status.Ready && 'bg-green-700'
             )}>

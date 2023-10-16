@@ -3,7 +3,6 @@ import fs from 'fs';
 import { Datasources } from "../../ApolloContext";
 import { Printer_Status, Steri_Item, Steri_Label, User } from "../__generated__/resolver-types";
 import { QRType, createQr } from "../utils/qr-service";
-import checkPrinters from '../utils/checkPrinters';
 
 export interface PrintHandler {
     printLabels: ReturnType<typeof printLabels>,
@@ -27,7 +26,8 @@ async function sendEzplToPrinterRaw(port: string, command: string): Promise<void
 
 const checkStatus = () => {
     return async () => {
-        checkPrinters()
+        // const result = await checkPrinters()
+        // return Promise.resolve(result ? Printer_Status.Ready : Printer_Status.NotReady)
         return Promise.resolve(Printer_Status.Ready)
     }
 }

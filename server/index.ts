@@ -16,9 +16,12 @@ import steriItemHandler from './src/data/steriItemHandler';
 import steriLabelHandler from './src/data/steriLabelHandler';
 import userHandler from './src/data/userHandler';
 import { resolvers } from './src/resolvers';
+import checkPrinters from './src/utils/checkPrinters';
 
 const app = Express()
 const port = 8080
+
+checkPrinters()
 
 const server = new ApolloServer<ApolloContext>({
     typeDefs: readFileSync('./schema.graphql', { encoding: 'utf-8' }),
