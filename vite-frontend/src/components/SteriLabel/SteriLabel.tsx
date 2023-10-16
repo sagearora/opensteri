@@ -45,14 +45,15 @@ function SteriLabel({
             {loading && <div className='absolute left-0 top-0 w-full h-full z-10 bg-white/50 flex items-center justify-center'>
                 <Loader2 />
             </div>}
-            {remove && <button
+            {remove && <Button
+                variant='destructive'
+                size='icon'
                 onClick={remove}
-                className='absolute text-white right-2 top-2 p-1 rounded-full
-                                hover:bg-gray-600 flex items-center justify-center bg-gray-500'>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                className='absolute right-2 top-2 '>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-            </button>}
+            </Button>}
             <div className='flex'>
                 <div className='flex-1'>
                     <p className='text-sm'>#{item.id} - {item.steri_item.category}</p>

@@ -13,8 +13,6 @@ function useScanner({
     is_scanning,
     onScan,
 }: useScannerProps) {
-
-
     useEffect(() => {
         if (!is_scanning) {
             return;
