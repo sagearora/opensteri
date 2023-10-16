@@ -14,7 +14,7 @@ function AppointmentCalendar({
 }) {
     const [loading, setLoading] = useState<boolean>(false)
     const [appointments, setAppointments] = useState<Appointment[]>([])
-    const [date, setDate] = useState<string>(dayjs().subtract(1, 'day').startOf('day').toISOString())
+    const [date, setDate] = useState<string>(dayjs().startOf('day').toISOString())
     const [view_appointment, setViewAppointment] = useState<Appointment>()
 
     const loadAppointments = useCallback(async () => {

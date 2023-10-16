@@ -1,7 +1,7 @@
 
 import {
     RouterProvider,
-    createBrowserRouter
+    createHashRouter
 } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import SettingsLayout from "../components/Layout/SettingsLayout";
@@ -28,7 +28,7 @@ import SteriCycleScreen from "./SteriCycle/SteriCycleScreen";
 import SteriCycleStartScreen from "./SteriCycle/SteriCycleStartScreen";
 import ToolsScreen from "./Tools/ToolsScreen";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
         path: '/settings',
         element: <SettingsLayout />,
