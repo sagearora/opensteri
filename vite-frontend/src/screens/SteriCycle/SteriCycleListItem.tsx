@@ -7,7 +7,7 @@ export type SteriCycleItemProps = {
 }
 
 export const SteriCycleListItem = ({ cycle }: SteriCycleItemProps) => {
-    return <Link className={`flex items-center my-2 p-2 rounded-xl ${!cycle.finish_at ? 'bg-orange-100 hover:bg-orange-300' : cycle.status === 'failed' ? 'bg-red-100 hover:bg-red-200' : 'bg-green-100 hover:bg-green-200'}`} to={`/cycles/${cycle.id}`}>
+    return <Link className={`flex items-center my-2 p-2 rounded-md ${!cycle.finish_at ? 'bg-orange-100 hover:bg-orange-300' : cycle.status === 'failed' ? 'bg-red-100 hover:bg-red-200' : 'bg-green-100 hover:bg-green-200'}`} to={`/cycles/${cycle.id}`}>
         <div className='flex-1'>
             <p className='text-sm font-semibold'>{cycle.steri?.name} {cycle.steri?.serial}</p>
             <p className='text-lg font-bold'>Cycle #{cycle.cycle_number}</p>

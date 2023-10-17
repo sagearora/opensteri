@@ -64,7 +64,7 @@ function ScanInput({
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
                 </svg>
 
-                <h1 className='text-center mb-2 font-bold text-md'>Scan items into Sterilizer.</h1>
+                <h1 className='text-center mb-2 font-bold text-md'>Use the handheld scanner to scan all items going into the sterilizer.</h1>
             </div>}
             <div className='flex items-center space-x-2 max-w-md mx-auto'>
                 <Input

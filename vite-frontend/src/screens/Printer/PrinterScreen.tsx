@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/button';
 import { toast } from "../../components/ui/use-toast";
 import { DefaultExpiryMonths } from "../../constants";
 import { useUser } from '../../lib/UserProvider';
+import CategoryItemList from './CategoryItemList';
 
 function PrinterScreen() {
     const { user } = useUser()
@@ -106,20 +107,16 @@ function PrinterScreen() {
             <div className='w-1/4 border-r-2 shadow-lg p-4 overflow-y-auto'>
                 <p className='text-md font-bold mb-2'>Categories</p>
                 {Object.keys(categories).map(category => <button
-                    className={`p-4 w-full mb-4 rounded-xl ${selected_category?.name === category ? 'bg-green-100 hover:bg-green-200' : 'bg-slate-200 hover:bg-slate-300'}`}
+                    className={`p-4 w-full mb-4 rounded-md ${selected_category?.name === category ? 'bg-green-100 hover:bg-green-200' : 'bg-slate-200 hover:bg-slate-300'}`}
                     onClick={() => setSelectedCategory(categories[category])}
                     key={category}>{category}</button>)}
             </div>
             <div className='flex-1 relative'>
                 <div className='p-4'>
                     <p className='text-md font-bold mb-2'>{selected_category?.name || 'Pick a category'}</p>
-                    {selected_category ? <div className='w-full grid grid-cols-3 gap-4 items-start'>
-                        {selected_category.items.map(item => <button
-                            key={item.id}
-                            onClick={() => addItem(item)}
-                            className='relative p-4 bg-slate-100 h-full rounded-xl overflow-hidden'
-                        >{item.name}
-                        </button>)}</div> : null}
+                    {selected_category ? <CategoryItemList
+                        items={selected_category.items}
+                        addItem={addItem} /> : null}
                 </div>
             </div>
             <div className='w-1/4 p-4 border-l-2 flex flex-col justify-center items-stretch overflow-hidden'>
@@ -137,7 +134,7 @@ function PrinterScreen() {
                     {items.filter(item => to_print[item.id] > 0).map(item => <button
                         key={item.id}
                         onClick={() => removeItem(item)}
-                        className='relative w-full my-2 p-2 bg-slate-100 block rounded-xl overflow-hidden'
+                        className='relative w-full my-2 p-2 bg-slate-100 block rounded-md overflow-hidden'
                     ><span className='absolute left-0 top-0 w-8 flex items-center justify-center
                 text-3xl font-bold h-full bg-red-500'>-</span>{item.name}<span className='absolute right-0 top-0 w-8 flex items-center justify-center
                 text-xl font-bold h-full bg-green-200'>{to_print[item.id]}</span></button>)}

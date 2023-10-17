@@ -62,7 +62,7 @@ function AppointmentCalendar({
                         <p className='text-md font-bold'>{dayjs(date).format('MMM DD, YYYY')}</p>
                         <button
                             onClick={setToToday}
-                            className="px-2 py-1 mx-2  bg-slate-200 rounded-xl">Today</button>
+                            className="px-2 py-1 mx-2  bg-slate-200 rounded-md">Today</button>
                     </div>
                     <button onClick={goNextDay} className="p-2 mx-2  bg-slate-200 rounded-full">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"

@@ -49,7 +49,7 @@ function SteriController({
     }
 
     if (status === Steri_Cycle_Status.Loading) {
-        return <div className='bg-slate-100 p-4 rounded-xl shadow-lg mb-8'>
+        return <div className='bg-slate-100 p-4 rounded-md shadow-lg mb-8'>
             <Button className='w-full'
                 size='lg' disabled={loading} onClick={() => start()}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -58,7 +58,7 @@ function SteriController({
     }
 
     if (status === Steri_Cycle_Status.Running) {
-        return <div className='bg-slate-100 p-4 rounded-xl shadow-lg my-8'>
+        return <div className='bg-slate-100 p-4 rounded-md shadow-lg my-8'>
             <p className='text-lg font-bold mb-2'>Finish Cycle</p>
             <div className='my-2 py-2 flex items-center'>
                 <div className='flex-1'>
