@@ -205,7 +205,7 @@ function AppointmentScanner({
                             <p className='text-sm text-gray-600'>{item.clinic_user.name} &middot; {dayjs(item.checkout_at).fromNow()}</p>
                         </div>
                         <Button variant={item.next_label_id ? 'outline' : 'default'} size='icon'
-                            disabled={!item.next_label_id || item.next_label_id === 1}
+                            disabled={!!item.next_label_id && item.next_label_id !== 1}
                             onClick={() => printReplacement([item])}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
