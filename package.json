@@ -1,6 +1,6 @@
 {
   "name": "opensteri",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Open-source sterilization logging tool for dental and medical clinics",
   "main": "index.js",
   "repository": "git@github.com-sagearora:sagearora/opensteri.git",

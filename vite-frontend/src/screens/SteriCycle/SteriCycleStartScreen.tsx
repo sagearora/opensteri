@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
-import { ListSteriCyclesDocument, useCreateSteriCycleMutation } from '../../__generated__/graphql';
+import { ListSteriCyclesDocument, Order_Direction, useCreateSteriCycleMutation } from '../../__generated__/graphql';
 import BackButton from '../../components/BackButton';
-import { LargeInt, PageLimit } from '../../constants';
+import { PageLimit } from '../../constants';
 import { createErrorToast } from '../../lib/createErrorToast';
 import SteriCycleForm, { SteriCycleFormSchema } from './SteriCycleForm';
 
@@ -12,8 +12,12 @@ function SteriCycleStartScreen() {
         refetchQueries: [{
             query: ListSteriCyclesDocument,
             variables: {
-                cursor: LargeInt,
+                offset: 0,
                 limit: PageLimit,
+                order_by: [{
+                    column: 'id',
+                    direction: Order_Direction.Desc,
+                }]
             }
         }]
     });
