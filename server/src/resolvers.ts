@@ -1,7 +1,13 @@
 import { GraphQLError } from 'graphql';
 import { Printer_Status, Resolvers, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
 import { Setting_Clinic_Key } from './constants';
+import { PrintHandler } from './data/printHandler';
 
+const throwIfPrinterNotReady = (printHandler: PrintHandler) => {
+    if (!printHandler.checkStatus()) {
+        throw new Error('Printer is not ready')
+    }
+}
 
 export const resolvers: Resolvers = {
     Query: {
@@ -58,7 +64,7 @@ export const resolvers: Resolvers = {
         },
         steri_cycle: (p, args, context) => {
             return context.datasources.steriCycleHandler
-                .list()
+                .list(args)
         },
         steri_cycle_by_pk: (p, args, context) => {
             return context.datasources.steriCycleHandler
@@ -121,9 +127,7 @@ export const resolvers: Resolvers = {
         insert_steri_label: async (p, args, context) => {
             const handler = context.datasources.steriLabelHandler
             const printHandler = context.datasources.printHandler
-            if (!printHandler.checkStatus()) {
-                throw new Error('Printer is not ready')
-            }
+            throwIfPrinterNotReady(printHandler)
             const ids = await handler.insert(args.objects)
             const labels = await Promise.all(ids.map(id => handler.get(id)))
             try {
@@ -193,6 +197,7 @@ export const resolvers: Resolvers = {
                         break
                     }
                     case Steri_Label_Event_Type.Reprint: {
+                        throwIfPrinterNotReady(printHandler)
                         const label = await handler.get(item.steri_label_id)
                         if (label) {
                             to_print.push(label)
@@ -201,6 +206,7 @@ export const resolvers: Resolvers = {
                         break
                     }
                     case Steri_Label_Event_Type.UpdateSteriItemId: {
+                        throwIfPrinterNotReady(printHandler)
                         const data = JSON.parse(item.data)
                         if (!data.steri_item_id) {
                             continue
@@ -231,6 +237,7 @@ export const resolvers: Resolvers = {
                         break
                     }
                     case Steri_Label_Event_Type.PrintReplacement: {
+                        throwIfPrinterNotReady(printHandler)
                         const data = JSON.parse(item.data)
                         if (!data.expiry_at) {
                             continue

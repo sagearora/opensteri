@@ -27,6 +27,7 @@ async (args?: ListArgs) => {
     return (
         await tbl().select()
         .modify((qb) => {
+            console.log(args?.order_by)
             if (args?.order_by) {
                 args.order_by.forEach(order => {
                     qb.orderBy(order.column, order.direction)
