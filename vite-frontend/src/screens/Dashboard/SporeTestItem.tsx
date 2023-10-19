@@ -7,7 +7,7 @@ import { toast } from '../../components/ui/use-toast';
 import { cn } from '../../lib/utils';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../components/ui/alert-dialog';
 
-const Spore_Test_Wait_Time_Minutes = 60 * 60 * 24;
+const Spore_Test_Wait_Time_Minutes = 60 * 24;
 
 function SporeTestItem({
     cycle,
@@ -19,9 +19,10 @@ function SporeTestItem({
     updateCycle: (cycle_id: number, v: Steri_Cycle_Set_Input) => Promise<boolean>
 }) {
     const is_past_24_hours = useMemo(
-        () => dayjs().diff(dayjs(cycle.start_at), 'minute') >= Spore_Test_Wait_Time_Minutes,
+        () => dayjs().diff(cycle.start_at, 'minute') >= Spore_Test_Wait_Time_Minutes,
         [cycle.start_at]
     )
+
     const [did_spore_grow_sterilized, setDidSporeGrowSterilized] = useState(false);
     const [did_spore_grow_control, setDidSporeGrowControl] = useState(false);
     const [show_failed_dialog, setShowFailedDialog] = useState(false);

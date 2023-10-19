@@ -10,7 +10,7 @@ function SporeTestWidget() {
     data,
     loading,
   } = usePollPendingSporeTestsQuery({
-    pollInterval: 5000,
+    pollInterval: 10 * 60 * 1000,
   })
 
   const [executeMutation] = useUpdateSteriCycleMutation()
@@ -36,7 +36,7 @@ function SporeTestWidget() {
   }
 
   return (
-    <div className='p-2 bg-gray-50 rounded-md'>
+    <div className='p-2 bg-gray-50 rounded-md my-8'>
       <p className='text-md font-semibold text-center mb-2'>Pending Spore Tests</p>
       {loading && <Loader2 className='animate-spin mx-auto' size={32} />}
       {items.map(cycle => <SporeTestItem
