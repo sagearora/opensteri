@@ -6,7 +6,7 @@ import {
 import Layout from "../components/Layout/Layout";
 import SettingsLayout from "../components/Layout/SettingsLayout";
 import { UserProvider } from "../lib/UserProvider";
-import CountScreen from "./Count/CountScreen";
+import CountListScreen from "./Count/CountListScreen";
 import DashboardScreen from "./Dashboard/DashboardScreen";
 import ErrorScreen from "./ErrorScreen";
 import PrinterScreen from "./Printer/PrinterScreen";
@@ -27,6 +27,7 @@ import SteriCycleListScreen from "./SteriCycle/SteriCycleListScreen";
 import SteriCycleScreen from "./SteriCycle/SteriCycleScreen";
 import SteriCycleStartScreen from "./SteriCycle/SteriCycleStartScreen";
 import ToolsScreen from "./Tools/ToolsScreen";
+import CountScreen from "./Count/CountScreen";
 
 const router = createHashRouter([
     {
@@ -99,7 +100,13 @@ const router = createHashRouter([
                 element: <PrinterScreen />
             }, {
                 path: 'counts',
-                element: <CountScreen />
+                children: [{
+                    path: '',
+                    element: <CountListScreen />
+                }, {
+                    path: ':count_id',
+                    element: <CountScreen />
+                }]
             }, {
                 path: 'tools',
                 element: <ToolsScreen />

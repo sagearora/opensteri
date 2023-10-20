@@ -79,6 +79,14 @@ export const resolvers: Resolvers = {
                 })
                 .orderBy('start_at', 'asc')
         },
+        count_by_pk: (p, args, context) => {
+            const countHandler = context.datasources.countHandler
+            return countHandler.get(args.id)
+        },
+        count: (p, args, context) => {
+            return context.datasources.countHandler
+                .list(args)
+        }
     },
     Mutation: {
         update_clinic: async (p, args, context) => {
@@ -258,6 +266,22 @@ export const resolvers: Resolvers = {
                         to_print.push(await handler.get(new_label_id))
                         break;
                     }
+                    case Steri_Label_Event_Type.CountSteriItem: {
+                        const data = JSON.parse(item.data)
+                        if (!data.count_id) {
+                            continue
+                        }
+                        steri_labels.push(await handler.update(item.steri_label_id, {
+                            count_id: data.count_id,
+                        }))
+                        break;
+                    }
+                    case Steri_Label_Event_Type.UndoCount: {
+                        steri_labels.push(await handler.update(item.steri_label_id, {
+                            count_id: null,
+                        }))
+                        break
+                    }
                     default: {
                         throw new Error('Invalid event')
                     }
@@ -272,6 +296,24 @@ export const resolvers: Resolvers = {
                 returning: steri_labels
             }
         },
+        insert_count_one: async (p, args, context) => {
+            const countHandler = context.datasources.countHandler
+            const steriItemHandler = context.datasources.steriItemHandler
+            const countable_items = (await steriItemHandler.list())
+                .filter(item => item.is_count_enabled && (item.total_count || 0) > 0)
+                .map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    category: item.category,
+                    total_count: item.total_count,
+                }))
+
+            const id = (await countHandler.insert([{
+                ...args.object,
+                countable_items,
+            }]))[0]
+            return countHandler.get(id)
+        }
     },
     clinic: {
         user: async (p, args, context) => {
@@ -346,5 +388,27 @@ export const resolvers: Resolvers = {
             return context.datasources.userHandler
                 .get(p.finish_user_id)
         }
+    },
+    count: {
+        user: async (p, args, context) => {
+            if (p.user) {
+                return p.user
+            }
+            const userHandler = context.datasources.userHandler
+            const user = userHandler.get(p.user_id)
+            return user
+        },
+        steri_labels: (p, args, context) => {
+            return context.datasources.steriLabelHandler
+                .raw()
+                .where({
+                    count_id: p.id
+                })
+                .modify(qb => {
+                    if (args.order_by) {
+                        qb.orderBy(args.order_by.column, args.order_by.direction)
+                    }
+                })
+        },
     },
 };

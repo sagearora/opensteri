@@ -1,0 +1,39 @@
+fragment CountableItem on countable_item {
+    id
+    name
+    category
+    total_count
+}
+
+fragment Count on count {
+    id
+    created_at
+    updated_at
+    countable_items {
+        ...CountableItem
+    }
+    steri_labels {
+        ...SteriLabel
+    }
+    user {
+        ...User
+    }
+}
+
+mutation createCount($object: count_insert_input!) {
+    insert_count_one(object: $object) {
+        ...Count
+    }
+}
+
+query getCount($id: Int!) {
+    count_by_pk(id: $id) {
+        ...Count
+    }
+}
+
+query listCount($offset: Int, $limit: Int, $order_by: [order_by!]) {
+    count(offset: $offset, limit: $limit, order_by:$order_by) {
+        ...Count
+    }
+}

@@ -16,6 +16,7 @@ import steriItemHandler from './src/data/steriItemHandler';
 import steriLabelHandler from './src/data/steriLabelHandler';
 import userHandler from './src/data/userHandler';
 import { resolvers } from './src/resolvers';
+import countHandler from './src/data/countHandler';
 
 const app = Express()
 const port = 8080
@@ -45,6 +46,7 @@ try {
                             steriLabelHandler: steriLabelHandler.create(),
                             steriCycleHandler: steriCycleHandler.create(),
                             printHandler: printHandler.create(),
+                            countHandler: countHandler.create(),
                             settingHandler: settingHandler.create(),
                         }
                     })

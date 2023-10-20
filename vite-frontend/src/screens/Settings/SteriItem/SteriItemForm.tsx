@@ -112,10 +112,10 @@ function SteriItemForm({
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                                 <FormLabel className="text-base">
-                                    Sterilizer is active
+                                    Item is active
                                 </FormLabel>
                                 <FormDescription>
-                                    Slide to activate or deactivate the sterilizer.
+                                    Slide to activate or deactivate the item.
                                 </FormDescription>
                             </div>
                             <FormControl>

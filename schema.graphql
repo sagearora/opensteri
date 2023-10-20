@@ -130,6 +130,7 @@ type steri_label {
     appointment_id: String
     checkout_at: String
     next_label_id: Int
+    count_id: Int
 }
 
 input steri_label_insert_input {
@@ -148,6 +149,7 @@ input steri_label_set_input {
     appointment_id: String
     checkout_at: String
     next_label_id: Int
+    count_id: Int
 }
 
 type steri_label_mutation_response {
@@ -225,6 +227,8 @@ enum steri_label_event_type {
     checkout_steri_item
     undo_checkout
     print_replacement
+    count_steri_item
+    undo_count
 }
 
 input steri_label_event_insert_input {
@@ -237,6 +241,27 @@ input steri_label_event_insert_input {
 
 input steri_label_where {
     appointment_id: String
+}
+
+type countable_item {
+    id: Int!
+    category: String!
+    name: String!
+    total_count: Int!
+}
+
+type count {
+    id: Int!
+    created_at: String!
+    updated_at: String!
+    user_id: Int!
+    user: user!
+    steri_labels(offset: Int, limit: Int, order_by: order_by): [steri_label!]!
+    countable_items: [countable_item!]!
+}
+
+input count_insert_input {
+    user_id: Int!
 }
 
 type Query {
@@ -254,6 +279,8 @@ type Query {
     steri_cycle_by_pk(id: Int!): steri_cycle
     steri_cycle(limit: Int, offset: Int, order_by: [order_by!]): [steri_cycle!]
     pending_spore_test: [steri_cycle!]
+    count(limit: Int, offset: Int, order_by: [order_by!]): [count!]
+    count_by_pk(id: Int!): count
 }
 
 type Mutation {
@@ -270,4 +297,5 @@ type Mutation {
     insert_steri_label_event(objects: [steri_label_event_insert_input!]!): steri_label_mutation_response
     insert_steri_cycle_one(object: steri_cycle_insert_input!): steri_cycle
     update_steri_cycle_by_pk(id: Int!, set: steri_cycle_set_input!): steri_cycle
+    insert_count_one(object: count_insert_input!): count
 }

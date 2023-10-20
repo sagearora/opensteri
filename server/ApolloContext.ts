@@ -1,3 +1,4 @@
+import { CountHandler } from './src/data/countHandler';
 import { PrintHandler } from './src/data/printHandler';
 import { SettingHandler } from './src/data/settingHandler';
 import { SteriCycleHandler } from './src/data/steriCycleHandler';
@@ -13,6 +14,7 @@ export interface Datasources {
     steriHandler: SteriHandler;
     steriLabelHandler: SteriLabelHandler;
     steriCycleHandler: SteriCycleHandler;
+    countHandler: CountHandler;
     printHandler: PrintHandler;
 }
 

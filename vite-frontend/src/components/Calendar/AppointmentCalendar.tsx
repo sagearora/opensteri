@@ -20,6 +20,7 @@ function AppointmentCalendar({
     const loadAppointments = useCallback(async () => {
         setLoading(true)
         const response = await listAppointments(date)
+        
         setAppointments(response.items)
         setLoading(false)
     }, [date, listAppointments])
