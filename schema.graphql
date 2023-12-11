@@ -277,10 +277,11 @@ type Query {
     steri_item_category: [steri_item_category!]
     steri_label(limit: Int, where: steri_label_where offset: Int, order_by: [order_by!]): [steri_label!]
     steri_cycle_by_pk(id: Int!): steri_cycle
-    steri_cycle(limit: Int, offset: Int, order_by: [order_by!]): [steri_cycle!]
+    steri_cycle(steri_id: Int, limit: Int, offset: Int, order_by: [order_by!]): [steri_cycle!]
     pending_spore_test: [steri_cycle!]
     count(limit: Int, offset: Int, order_by: [order_by!]): [count!]
     count_by_pk(id: Int!): count
+    steri_cycle_count(steri_id: Int): Int
 }
 
 type Mutation {

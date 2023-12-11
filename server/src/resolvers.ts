@@ -66,6 +66,10 @@ export const resolvers: Resolvers = {
             return context.datasources.steriCycleHandler
                 .list(args)
         },
+        steri_cycle_count: async (p, args, context) => {
+            const steriCycleHandler = context.datasources.steriCycleHandler
+            return steriCycleHandler.count(args.steri_id)
+        },
         steri_cycle_by_pk: (p, args, context) => {
             return context.datasources.steriCycleHandler
                 .get(args.id)
@@ -86,7 +90,7 @@ export const resolvers: Resolvers = {
         count: (p, args, context) => {
             return context.datasources.countHandler
                 .list(args)
-        }
+        },
     },
     Mutation: {
         update_clinic: async (p, args, context) => {

@@ -36,10 +36,27 @@ fragment SteriCycle on steri_cycle {
 }
 
 
-query listSteriCycles($offset: Int, $limit: Int, $order_by: [order_by!]) { 
-    steri_cycle(limit: $limit, offset: $offset, order_by: $order_by) {
-        ...SteriCycle
+fragment SteriCycleListItem on steri_cycle {
+    id
+    created_at
+    updated_at
+    finish_at
+    status
+    spore_test_recorded_at
+    is_spore_test_enabled
+    spore_test_result
+    cycle_number
+    steri_id
+}
+
+query listSteriCycles($steri_id: Int, $offset: Int, $limit: Int, $order_by: [order_by!]) { 
+    steri_cycle(steri_id: $steri_id, limit: $limit, offset: $offset, order_by: $order_by) {
+        ...SteriCycleListItem
     }
+}
+
+query getSteriCycleCount($steri_id: Int) {
+    steri_cycle_count(steri_id: $steri_id)
 }
 
 query listActiveSterilizers {
