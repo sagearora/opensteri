@@ -5,6 +5,7 @@ import SetupForm from './SetupForm'
 import { CurveBaseUrlKey } from './constants'
 import { CurveHeroApi, CurveHeroCalls } from './curveheroCalls'
 import { UserInfo } from './curveheroTypes'
+import waitForElm from './waitForElem'
 
 export type CurveContextProps = {
   subdomain: string
@@ -32,15 +33,8 @@ function CurveProvider({
 
   //check if chrome extension is installed
   useEffect(() => {
-    const listener = (event: MessageEvent<{ type: string }>) => {
-      const result = event.data
-      if (result && result.type === 'curvemax_installed') {
-        setIsExtensionInstalled(true)
-      }
-    }
-    window.addEventListener('message', listener)
-    window.postMessage({ type: 'is_curvemax_installed' }, '*')
-    return () => window.removeEventListener('message', listener)
+    waitForElm('.curvemax-extension')
+      .then(() => setIsExtensionInstalled(true))
   }, [])
 
   const setSubdomain = (subdomain: string) => {
@@ -127,7 +121,7 @@ function CurveProvider({
       user,
       logout,
     }}>
-        {children}
+      {children}
     </RootContext.Provider>
   )
 }
