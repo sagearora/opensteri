@@ -1,7 +1,6 @@
 import { Knex } from 'knex'
-import { Count, Count_Insert_Input } from '../__generated__/resolver-types'
+import { Count, QueryCountArgs } from '../__generated__/resolver-types'
 import knexConnection from "../db-config"
-import { ListArgs } from './types'
 
 
 export interface CountHandler {
@@ -22,17 +21,14 @@ const get = (tbl: () => Knex.QueryBuilder) =>
         )[0]
         return item ? {
             ...item,
-            countable_items: JSON.parse(item.countable_items)
+            countable_items: JSON.parse(item.countable_items),
+            final_count: JSON.parse(item?.final_count || '[]')
         } as Count : null
     }
 
-export interface CountListArgs extends ListArgs {
-    where?: {
-    } | null
-}
 
 const list = (tbl: () => Knex.QueryBuilder) =>
-    async (args?: CountListArgs) => {
+    async (args?: QueryCountArgs) => {
         return (
             await tbl().select()
                 .modify((qb) => {
@@ -43,10 +39,18 @@ const list = (tbl: () => Knex.QueryBuilder) =>
                     }
                     if (args?.limit) qb.limit(args.limit)
                     if (args?.offset) qb.offset(args.offset)
+                    if (args?.where) {
+                        if (args.where.is_locked === true) {
+                            qb.whereNotNull('is_locked_at')
+                        } else if (args.where.is_locked === false) {
+                            qb.whereNull('is_locked_at')
+                        }
+                    }
                 })
         ).map((item: any) => ({
             ...item,
             countable_items: JSON.parse(item.countable_items),
+            final_count: JSON.parse(item?.final_count || '[]'),
         })) as Count[]
     }
 
@@ -57,16 +61,23 @@ const insert = (tbl: () => Knex.QueryBuilder) =>
     }[]) => {
         const items = await tbl().insert(attributes.map(att => ({
             ...att,
-            countable_items: JSON.stringify(att.countable_items || [])
+            countable_items: JSON.stringify(att.countable_items || []),
+            final_count: JSON.stringify(att.countable_items || []),
         })), ['id'])
         return items.map(item => item.id)
     }
 
 const update = (tbl: () => Knex.QueryBuilder) =>
-    async (id: number, attributes: Partial<Count_Insert_Input>) => {
+    async (id: number, attributes: {
+        is_locked_at?: string
+        final_count?: any[]
+    }) => {
         return (
             await tbl()
-                .update(attributes, '*')
+                .update({
+                    ...attributes,
+                    final_count: JSON.stringify(attributes.final_count || []),
+                }, '*')
                 .where({
                     id,
                 })

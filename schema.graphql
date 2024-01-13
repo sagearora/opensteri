@@ -152,9 +152,15 @@ input steri_label_set_input {
     count_id: Int
 }
 
+type steri_event_failure {
+    id: Int!
+    reason: String!
+}
+
 type steri_label_mutation_response {
     affected_rows: Int!
     returning: [steri_label!]
+    failures: [steri_event_failure!]
 }
 
 type steri_item_category {
@@ -248,6 +254,7 @@ type countable_item {
     category: String!
     name: String!
     total_count: Int!
+    total_scanned: Int
 }
 
 type count {
@@ -258,10 +265,16 @@ type count {
     user: user!
     steri_labels(offset: Int, limit: Int, order_by: order_by): [steri_label!]!
     countable_items: [countable_item!]!
+    is_locked_at: String
+    final_count: [countable_item!]
 }
 
 input count_insert_input {
     user_id: Int!
+}
+
+input count_where {
+    is_locked: Boolean
 }
 
 type Query {
@@ -275,11 +288,11 @@ type Query {
     steri_item(limit: Int, offset: Int, order_by: [order_by!]): [steri_item!]
     steri_item_by_pk(id: Int!): steri_item
     steri_item_category: [steri_item_category!]
-    steri_label(limit: Int, where: steri_label_where offset: Int, order_by: [order_by!]): [steri_label!]
+    steri_label(limit: Int, where: steri_label_where, offset: Int, order_by: [order_by!]): [steri_label!]
     steri_cycle_by_pk(id: Int!): steri_cycle
     steri_cycle(steri_id: Int, limit: Int, offset: Int, order_by: [order_by!]): [steri_cycle!]
     pending_spore_test: [steri_cycle!]
-    count(limit: Int, offset: Int, order_by: [order_by!]): [count!]
+    count(limit: Int, offset: Int, order_by: [order_by!], where: count_where): [count!]
     count_by_pk(id: Int!): count
     steri_cycle_count(steri_id: Int): Int
 }
@@ -299,4 +312,5 @@ type Mutation {
     insert_steri_cycle_one(object: steri_cycle_insert_input!): steri_cycle
     update_steri_cycle_by_pk(id: Int!, set: steri_cycle_set_input!): steri_cycle
     insert_count_one(object: count_insert_input!): count
+    finish_count(id: Int!): count
 }

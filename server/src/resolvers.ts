@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql';
-import { Printer_Status, Resolvers, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
+import { Order_Direction, Printer_Status, Resolvers, Steri_Event_Failure, Steri_Label, Steri_Label_Event_Type } from './__generated__/resolver-types';
 import { Setting_Clinic_Key } from './constants';
 import { PrintHandler } from './data/printHandler';
 
@@ -185,12 +185,17 @@ export const resolvers: Resolvers = {
             let affected_rows = 0
             const steri_labels: Steri_Label[] = []
             const to_print: Steri_Label[] = []
+            const failures: Steri_Event_Failure[] = []
             for (let i = 0; i < args.objects.length; i++) {
                 const item = args.objects[i]
                 switch (item.type) {
                     case Steri_Label_Event_Type.AddSteriItem: {
                         const data = JSON.parse(item.data)
                         if (!data.steri_cycle_id) {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: 'Steri Cycle Id not provided'
+                            })
                             continue
                         }
                         steri_labels.push(await handler.update(item.steri_label_id, {
@@ -221,6 +226,10 @@ export const resolvers: Resolvers = {
                         throwIfPrinterNotReady(printHandler)
                         const data = JSON.parse(item.data)
                         if (!data.steri_item_id) {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: 'New Steri Item Id not provided'
+                            })
                             continue
                         }
                         const label = await handler.update(item.steri_label_id, {
@@ -233,11 +242,16 @@ export const resolvers: Resolvers = {
                     case Steri_Label_Event_Type.CheckoutSteriItem: {
                         const data = JSON.parse(item.data)
                         if (!data.appointment_id) {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: 'Appointment Id not provided'
+                            })
                             continue
                         }
                         steri_labels.push(await handler.update(item.steri_label_id, {
                             appointment_id: data.appointment_id,
                             checkout_at: new Date().toISOString(),
+                            count_id: null,
                         }))
                         break
                     }
@@ -252,10 +266,18 @@ export const resolvers: Resolvers = {
                         throwIfPrinterNotReady(printHandler)
                         const data = JSON.parse(item.data)
                         if (!data.expiry_at) {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: 'Expiry At not provided'
+                            })
                             continue
                         }
                         const current_label = await handler.get(item.steri_label_id)
                         if (!current_label) {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: 'Steri Label does not exist'
+                            })
                             continue
                         }
                         const [new_label_id] = await handler.insert([{
@@ -273,6 +295,18 @@ export const resolvers: Resolvers = {
                     case Steri_Label_Event_Type.CountSteriItem: {
                         const data = JSON.parse(item.data)
                         if (!data.count_id) {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: 'Count Id not provided'
+                            })
+                            continue
+                        }
+                        const current_label = await handler.get(item.steri_label_id)
+                        if (current_label?.appointment_id) {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: `Steri Label is Checked Out. Appointment ID: ${current_label.appointment_id}. Cannot count.`
+                            })
                             continue
                         }
                         steri_labels.push(await handler.update(item.steri_label_id, {
@@ -297,11 +331,25 @@ export const resolvers: Resolvers = {
             }
             return {
                 affected_rows,
-                returning: steri_labels
+                returning: steri_labels,
+                failures,
             }
         },
         insert_count_one: async (p, args, context) => {
             const countHandler = context.datasources.countHandler
+            const last_unfinished_count = await countHandler.list({
+                limit: 1,
+                order_by: [{
+                    column: 'id',
+                    direction: Order_Direction.Desc,
+                }],
+                where: {
+                    is_locked: false,
+                }
+            })
+            if (last_unfinished_count.length > 0) {
+                return last_unfinished_count[0]
+            }
             const steriItemHandler = context.datasources.steriItemHandler
             const countable_items = (await steriItemHandler.list())
                 .filter(item => item.is_count_enabled && (item.total_count || 0) > 0)
@@ -317,6 +365,36 @@ export const resolvers: Resolvers = {
                 countable_items,
             }]))[0]
             return countHandler.get(id)
+        },
+        finish_count: async (p, args, context) => {
+            const countHandler = context.datasources.countHandler
+            const count = await countHandler.get(args.id)
+            if (!count || count.is_locked_at) {
+                return count
+            }
+            const steri_labels = await context.datasources.steriLabelHandler
+                .raw()
+                .where({
+                    count_id: args.id
+                }) as Steri_Label[]
+            
+            const item_count = (steri_labels || []).reduce((obj, item) => ({
+                ...obj,
+                [item.steri_item_id]: (obj[item.steri_item_id] || 0) + 1
+            }), {} as { [id: number]: number })
+            const final_count = count.countable_items.map(item => ({
+                ...item,
+                total_scanned: item_count[item.id] || 0,
+            }))
+            const updated_count = await countHandler.update(args.id, {
+                final_count,
+                is_locked_at: new Date().toISOString(),
+            })
+            return {
+                ...updated_count,
+                countable_items: JSON.parse(updated_count?.countable_items || '[]'),
+                final_count: JSON.parse(updated_count?.final_count || '[]'),
+            }
         }
     },
     clinic: {

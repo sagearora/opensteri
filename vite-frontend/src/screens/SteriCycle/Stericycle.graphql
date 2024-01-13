@@ -90,5 +90,9 @@ mutation insertSteriLabelEvent($objects: [steri_label_event_insert_input!]!) {
         returning {
             ...SteriLabel
         }
+        failures {
+            id
+            reason
+        }
     }
 }

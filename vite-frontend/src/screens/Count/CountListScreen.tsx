@@ -1,12 +1,13 @@
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { Order_Direction, useCreateCountMutation, useListCountQuery } from "../../__generated__/graphql"
+import { useNavigate } from "react-router-dom"
+import { Order_Direction, useCreateCountMutation, useGetUnfinishedCountQuery, useListCountQuery } from "../../__generated__/graphql"
 import { Button } from "../../components/ui/button"
 import { PageLimit } from "../../constants"
 import { useUser } from "../../lib/UserProvider"
 import { createErrorToast } from "../../lib/createErrorToast"
 import CountListItem from "./CountListItem"
+import PendingCountListItem from "./PendingCountListItem"
 
 function CountListScreen() {
     const navigate = useNavigate()
@@ -14,9 +15,12 @@ function CountListScreen() {
     const [createCount, { loading: creating }] = useCreateCountMutation()
     const [page] = useState(0)
     const {
+        data: unfinished_count,
+        refetch,
+    } = useGetUnfinishedCountQuery()
+    const {
         loading,
         data,
-        refetch,
     } = useListCountQuery({
         variables: {
             offset: page * PageLimit,
@@ -29,7 +33,7 @@ function CountListScreen() {
     })
 
     const counts = data?.count || [];
-
+    const unfinished = (unfinished_count?.count || [])[0]
 
     const create = async () => {
         try {
@@ -61,10 +65,10 @@ function CountListScreen() {
                     + Start a Count</Button>
             </div>
             {loading && <Loader2 className="mx-auto h-8 w-8 animate-spin" />}
-            {counts.map(item => <Link to={`/counts/${item.id}`}
-                key={item.id} className="block bg-slate-100 p-4 hover:bg-slate-200 rounded-md my-2">
-                <CountListItem count={item} />
-            </Link>)}
+            <div className="space-y-4">
+                {unfinished && <PendingCountListItem count={unfinished} />}
+                {counts.map(item => <CountListItem count={item} key={item.id} />)}
+            </div>
         </div>
     )
 }

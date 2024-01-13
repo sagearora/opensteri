@@ -7,7 +7,7 @@ import { DefaultExpiryMonths, QRType } from '../../constants';
 import { useUser } from '../../lib/UserProvider';
 import { createErrorToast } from '../../lib/createErrorToast';
 import useBeep from '../../lib/use-beep';
-import useScanner from '../../lib/use-scanner';
+import ScanInput from '../../screens/SteriCycle/ScanInput';
 import { Button } from '../ui/button';
 import { toast } from '../ui/use-toast';
 
@@ -28,7 +28,7 @@ function AppointmentScanner({
     const [insertEvent] = useInsertSteriLabelEventMutation()
     const [loading_label, setLoadingLabel] = useState<{ [id: number]: boolean }>({});
 
-    const items = data?.steri_label || []
+    const items = useMemo(() => data?.steri_label || [], [data?.steri_label])
 
     const onScan = async (data: {
         type: QRType;
@@ -73,11 +73,6 @@ function AppointmentScanner({
         }
     }
 
-    useScanner({
-        is_scanning: !!user,
-        onScan: onScan
-    })
-
     const not_printed = useMemo(() => {
         return items.filter(i => !i.next_label_id || i.next_label_id === 1)
     }, [items])
@@ -119,7 +114,7 @@ function AppointmentScanner({
         if (not_printed.length === 0) {
             return
         }
-       printReplacement(not_printed)
+        printReplacement(not_printed)
     }
 
     const printReplacement = async (items: SteriLabelFragment[]) => {
@@ -166,23 +161,19 @@ function AppointmentScanner({
                     </svg>
                 </button>
             </div>
-            <div className='px-2 flex flex-col items-center py-2'>
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-12 h-12 mb-2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" />
-                </svg>
-                {items.length > 0 && <>
-                    <p className='text-5xl font-bold text-green-600'>{items.length} Items</p>
-                    <p className='text-lg'>Last Added: <span className='font-bold text-green-600'>
-                        {items[0]?.steri_item?.name}</span> {dayjs(items[0]?.checkout_at).fromNow()}</p>
-                </>}
-                <h2 className='text-md text-center font-semibold text-gray-600'>Use the handheld scanner to scan all items going into the patient's chart.</h2>
-            </div>
+
+            {items.length > 0 && <div className='flex flex-col items-center'>
+                <p className='text-5xl font-bold text-green-600'>{items.length} Items</p>
+                <p className='text-lg'>Last Added: <span className='font-bold text-green-600'>
+                    {items[0]?.steri_item?.name}</span> {dayjs(items[0]?.checkout_at).fromNow()}</p>
+            </div>}
+
+            <ScanInput
+                is_finished={!user}
+                onScan={onScan}
+            />
+            
+           
             {items.length > 0 && <div className='px-4'>
                 <Button
                     type='button'

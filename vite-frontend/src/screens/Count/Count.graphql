@@ -3,6 +3,7 @@ fragment CountableItem on countable_item {
     name
     category
     total_count
+    total_scanned
 }
 
 fragment Count on count {
@@ -12,12 +13,32 @@ fragment Count on count {
     countable_items {
         ...CountableItem
     }
+    final_count {
+        ...CountableItem
+    }
     steri_labels {
         ...SteriLabel
     }
     user {
         ...User
     }
+    is_locked_at
+}
+
+fragment CountListItem on count {
+    id
+    created_at
+    updated_at
+    countable_items {
+        ...CountableItem
+    }
+    final_count {
+        ...CountableItem
+    }
+    user {
+        ...User
+    }
+    is_locked_at
 }
 
 mutation createCount($object: count_insert_input!) {
@@ -33,7 +54,19 @@ query getCount($id: Int!) {
 }
 
 query listCount($offset: Int, $limit: Int, $order_by: [order_by!]) {
-    count(offset: $offset, limit: $limit, order_by:$order_by) {
+    count(offset: $offset, limit: $limit, order_by:$order_by, where: {is_locked: true}) {
+        ...CountListItem
+    }
+}
+
+query getUnfinishedCount {
+    count(where: {is_locked: false}) {
+        ...Count
+    }
+}
+
+mutation finishCount($id: Int!) {
+    finish_count(id: $id) {
         ...Count
     }
 }
