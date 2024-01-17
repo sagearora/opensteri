@@ -6,7 +6,24 @@ const http_link = new HttpLink({
 
 const client = new ApolloClient({
   link: http_link,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache({
+    typePolicies: {
+      countable_item: {
+        fields: {
+          // Define custom merge function for fields you want to protect from overwrite
+          total_scanned: {
+            read () {
+              return undefined
+            },
+            merge(existing) {
+              // Do nothing, don't store in the cache
+              return existing; // or simply return;
+            },
+          },
+        },
+      },
+    },
+  })
 })
 
 export default client

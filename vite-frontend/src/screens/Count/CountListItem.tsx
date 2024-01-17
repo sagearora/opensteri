@@ -12,6 +12,7 @@ function CountListItem({
     const has_failed = useMemo(() => (count.final_count || [])?.findIndex(
         item => item.total_count > (item.total_scanned || 0)
     ) > -1, [count.final_count])
+    
     return (
         <div className={cn('block p-4 rounded-md bg-green-100 space-y-2', has_failed && 'bg-red-100')}>
             <div>
@@ -26,7 +27,7 @@ function CountListItem({
                 </div>
                 <div className='text-sm font-light'>Created by {count.user.name}</div>
             </div>
-            {(count.final_count || []).map(item => (
+            {(count.final_count || []).map((item) => (
                 <CountItem key={item.id} item={item} total_scanned={item.total_scanned || 0} />
             ))}
         </div>
