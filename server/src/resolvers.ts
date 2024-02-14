@@ -248,11 +248,19 @@ export const resolvers: Resolvers = {
                             })
                             continue
                         }
-                        steri_labels.push(await handler.update(item.steri_label_id, {
-                            appointment_id: data.appointment_id,
-                            checkout_at: new Date().toISOString(),
-                            count_id: null,
-                        }))
+                        const label = await handler.get(item.steri_label_id)
+                        if (label && label.steri_cycle_id) {
+                            steri_labels.push(await handler.update(item.steri_label_id, {
+                                appointment_id: data.appointment_id,
+                                checkout_at: new Date().toISOString(),
+                                count_id: null,
+                            }))
+                        }  else {
+                            failures.push({
+                                id: item.steri_label_id,
+                                reason: 'Item is not sterilized'
+                            })
+                        }
                         break
                     }
                     case Steri_Label_Event_Type.UndoCheckout: {
@@ -377,7 +385,7 @@ export const resolvers: Resolvers = {
                 .where({
                     count_id: args.id
                 }) as Steri_Label[]
-            
+
             const item_count = (steri_labels || []).reduce((obj, item) => ({
                 ...obj,
                 [item.steri_item_id]: (obj[item.steri_item_id] || 0) + 1
