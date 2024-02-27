@@ -1,11 +1,8 @@
+import FinishCycle, { FinishCycleSchema } from '@/screens/SteriCycle/FinishCycle';
 import dayjs from 'dayjs';
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
 import { Steri_Cycle_Set_Input, Steri_Cycle_Status, UserFragment } from '../../__generated__/graphql';
 import { Button } from '../../components/ui/button';
-import { Switch } from '../../components/ui/switch';
-import { AlertDialog } from '@/components/ui/alert-dialog';
-import FinishCycle, { FinishCycleSchema } from '@/screens/SteriCycle/FinishCycle';
 
 export type SteriControllerProps = {
     status: Steri_Cycle_Status;
