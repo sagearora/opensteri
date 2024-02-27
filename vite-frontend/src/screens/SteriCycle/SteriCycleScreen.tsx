@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { SteriLabelFragment, Steri_Cycle_Set_Input, Steri_Label_Event_Type, useGetSteriCycleQuery, useInsertSteriLabelEventMutation, useUpdateSteriCycleMutation } from '../../__generated__/graphql';
@@ -27,6 +27,7 @@ function SteriCycleScreen() {
     const [loading_steri_cycle_item, setLoadingSteriCycleItem] = useState<{ [id: number]: boolean }>({})
     const playBeep = useBeep()
 
+
     const {
         data,
         loading,
@@ -40,6 +41,24 @@ function SteriCycleScreen() {
 
     const cycle = data?.steri_cycle_by_pk;
 
+    const logdata = useMemo(() => {
+        if (!cycle?.finish_at) {
+            return null
+        }
+        if (cycle.log_data) {
+            return JSON.parse(cycle.log_data) as {
+                temp: number;
+                duration: string;
+                pressure: number;
+            }
+        }
+        return {
+            temp: 270,
+            duration: '04:00',
+            pressure: 20,
+        }
+    }, [cycle])
+    
     const onScan = async (data: {
         type: QRType;
         id: number | string;
@@ -167,6 +186,11 @@ function SteriCycleScreen() {
                 <p className='text-sm text-gray-800 font-semibold'>Notes</p>
                 <p className='text-sm'>{cycle.notes}</p>
             </div> : null}
+            {logdata && <div className='my-2'>
+                <p className='text-sm'>Temp: {logdata.temp}°F</p>
+                <p className='text-sm'>Time: {logdata.duration}</p>
+                <p className='text-sm'>Pressuer: {logdata.pressure}psi</p>
+            </div>}
 
             {(cycle.steri_labels || []).length > 0 ? <SteriController
                 status={cycle.status}
@@ -182,7 +206,7 @@ function SteriCycleScreen() {
             {/* <SteriLogViewer log_data={cycle.log_data} /> */}
 
             <div className='py-4'>
-                
+
                 {(cycle.steri_labels || []).length > 0 && <p className='text-lg font-bold'>Content</p>}
                 <div className='grid grid-cols-2 gap-4'>
                     {

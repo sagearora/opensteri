@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { Steri_Cycle_Set_Input, Steri_Cycle_Status, UserFragment } from '../../__generated__/graphql';
 import { Button } from '../../components/ui/button';
 import { Switch } from '../../components/ui/switch';
+import { AlertDialog } from '@/components/ui/alert-dialog';
+import FinishCycle, { FinishCycleSchema } from '@/screens/SteriCycle/FinishCycle';
 
 export type SteriControllerProps = {
     status: Steri_Cycle_Status;
     user: UserFragment;
-    finish_at?: string|null;
+    finish_at?: string | null;
     loading?: boolean;
     updateCycle: (v: Steri_Cycle_Set_Input) => void
 }
@@ -20,9 +22,6 @@ function SteriController({
     updateCycle,
     loading,
 }: SteriControllerProps) {
-    const [is_cycle_failed, setIsCycleFailed] = useState(false);
-    const [notes, setNotes] = useState('');
-
     const start = async () => {
         return updateCycle({
             start_at: new Date().toISOString(),
@@ -31,12 +30,17 @@ function SteriController({
         });
     }
 
-    const finish = async () => {
+    const finish = async (values: FinishCycleSchema) => {
         return updateCycle({
             finish_at: new Date().toISOString(),
             finish_user_id: user.id,
-            status: is_cycle_failed ? Steri_Cycle_Status.Failed : Steri_Cycle_Status.Finished,
-            notes,
+            status: values.is_cycle_failed ? Steri_Cycle_Status.Failed : Steri_Cycle_Status.Finished,
+            notes: values.notes,
+            log_data: JSON.stringify({
+                temp: values.temp,
+                duration: values.duration,
+                pressure: values.pressure,
+            })
         });
     }
 
@@ -60,7 +64,8 @@ function SteriController({
     if (status === Steri_Cycle_Status.Running) {
         return <div className='bg-slate-100 p-4 rounded-md shadow-lg my-8'>
             <p className='text-lg font-bold mb-2'>Finish Cycle</p>
-            <div className='my-2 py-2 flex items-center'>
+
+            {/* <div className='my-2 py-2 flex items-center'>
                 <div className='flex-1'>
                     <p className='text-md font-bold'>Did the cycle fail?</p>
                 </div>
@@ -88,7 +93,11 @@ function SteriController({
                 size='lg' color='primary'
                 disabled={loading} onClick={() => finish()}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Finish Cycle</Button>
+                Finish Cycle</Button> */}
+            <FinishCycle 
+                onSave={finish}
+                loading={loading}
+            />
         </div>
     }
 
