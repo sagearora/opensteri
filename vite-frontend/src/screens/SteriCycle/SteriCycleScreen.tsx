@@ -55,7 +55,7 @@ function SteriCycleScreen() {
         return {
             temp: 270,
             duration: '04:00',
-            pressure: 20,
+            pressure: 27.5,
         }
     }, [cycle])
     
