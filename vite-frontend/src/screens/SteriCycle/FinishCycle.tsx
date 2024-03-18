@@ -13,6 +13,7 @@ const schema = yup.object({
     temp: yup.number().required('Please provide exposure temp'),
     duration: yup.string().required('Please provide exposure time'),
     pressure: yup.number().required('Please provide exposure pressure'),
+    class5: yup.boolean().required('Please check if class 5 passed'),
     notes: yup.string(),
 }).required();
 
@@ -32,6 +33,7 @@ function FinishCycle({
             temp: undefined,
             duration: '',
             pressure: undefined,
+            class5: undefined,
             notes: '',
         }
     })
@@ -105,7 +107,27 @@ function FinishCycle({
                                 </FormItem>
                             );
                         }} />
-
+                    <FormField
+                        control={form.control}
+                        name='class5'
+                        render={({ field }) => {
+                            return (
+                                <FormItem className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <FormLabel className="text-base">
+                                            Has the Class V changed color/passed?
+                                        </FormLabel>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            );
+                        }} />
                     <FormField
                         control={form.control}
                         name='notes'

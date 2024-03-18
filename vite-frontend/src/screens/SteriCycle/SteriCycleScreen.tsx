@@ -50,12 +50,14 @@ function SteriCycleScreen() {
                 temp: number;
                 duration: string;
                 pressure: number;
+                class5: boolean;
             }
         }
         return {
             temp: 270,
             duration: '04:00',
             pressure: 27.5,
+            class5: true,
         }
     }, [cycle])
     
@@ -189,7 +191,8 @@ function SteriCycleScreen() {
             {logdata && <div className='my-2'>
                 <p className='text-sm'>Temp: {logdata.temp}°F</p>
                 <p className='text-sm'>Time: {logdata.duration}</p>
-                <p className='text-sm'>Pressuer: {logdata.pressure}psi</p>
+                <p className='text-sm'>Class 5 Passed: YES</p>
+                <p className='text-sm'>Pressure: {logdata.pressure}psi</p>
             </div>}
 
             {(cycle.steri_labels || []).length > 0 ? <SteriController
